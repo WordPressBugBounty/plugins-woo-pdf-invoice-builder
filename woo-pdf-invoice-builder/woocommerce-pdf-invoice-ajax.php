@@ -356,6 +356,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
         }
 
 
+        global $order;
 
         $order=wc_get_order($OrderId);
         if($order==false)
@@ -399,6 +400,9 @@ final class RednaoWooCommercePDFInvoiceAjax{
 
             $headers = array('Content-Type: text/html; charset=UTF-8');
             do_action('rnwcinv_send_pdf_email',$order->get_id(),$InvoiceId);
+
+
+            $Body=do_shortcode($Body);
 
             $emailData=(Object)[
                 'Order'=>$order,

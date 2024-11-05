@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=edsev
 Tags: woocommerce pdf invoice, woocommerce invoice, woocommerce, pdf, invoices
 Requires at least: 3.3
 Tested up to: 6.5.5
-Stable tag: 1.2.135
+Stable tag: 1.2.136
 License: GPLv3 or later
 Author URI: https://wooinvoice.rednao.com/
 Plugin URI: https://wooinvoice.rednao.com/
