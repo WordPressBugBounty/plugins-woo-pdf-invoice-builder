@@ -49,7 +49,7 @@ if(!class_exists('WP_LIST_TABLE'))
 wp_enqueue_script('jquery');
 wp_enqueue_script('wrcrbc-bootstrap-list',RednaoWooCommercePDFInvoice::$URL.'js/screens/InvoiceList.js');
 wp_localize_script('wrcrbc-bootstrap-list','rednaoPDFInvoiceParamsList',array(
-    'AddNewURL'=>sprintf('?page=%s&action=%s',$_REQUEST['page'],'add'),
+    'AddNewURL'=>sprintf('?page=%s&action=%s','invoice-builder-custom-fields','add'),
     'TemplateCount'=>$count,
     'IsPR'=>RednaoWooCommercePDFInvoice::IsPR()
 
@@ -124,8 +124,8 @@ class InvoiceList extends WP_List_Table
 
     function column_custom_field_name($item) {
         $actions = array(
-            __('edit')      => sprintf('<a href="?page=%s&id=%s&action=%s">Edit</a>',$_REQUEST['page'],$item->custom_field_id,'edit'),
-            __('delete')    => sprintf('<a href="javascript:(function(event){confirm(\'Are you sure you want to delete the field?\')?(window.location=\'?page=%s&id=%s&action=%s\'):\'\';event.returnValue=false; return false;})()">Delete</a>',$_REQUEST['page'],$item->custom_field_id,'delete')
+            __('edit')      => sprintf('<a href="?page=%s&id=%s&action=%s">Edit</a>','invoice-builder-custom-fields',$item->custom_field_id,'edit'),
+            __('delete')    => sprintf('<a href="javascript:(function(event){confirm(\'Are you sure you want to delete the field?\')?(window.location=\'?page=%s&id=%s&action=%s\'):\'\';event.returnValue=false; return false;})()">Delete</a>','invoice-builder-custom-fields',$item->custom_field_id,'delete')
         );
 
         return sprintf('%1$s %2$s', $item->custom_field_name, $this->row_actions($actions) );
