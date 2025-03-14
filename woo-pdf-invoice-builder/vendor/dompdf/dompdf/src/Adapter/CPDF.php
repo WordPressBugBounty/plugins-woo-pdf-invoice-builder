@@ -650,7 +650,7 @@ class CPDF implements Canvas
     public function filled_rectangle($x1, $y1, $w, $h, $color)
     {
         $this->_set_fill_color($color);
-        $this->_pdf->filledRectangle($x1, $this->y($y1) - $h, $w, $h);
+        $this->_pdf->filledRectangle($x1, $this->y($y1) - floatval($h), $w, $h);
         $this->_set_fill_transparency("Normal", $this->_current_opacity);
     }
 

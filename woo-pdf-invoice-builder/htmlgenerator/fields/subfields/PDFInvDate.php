@@ -16,7 +16,7 @@ class PDFInvDate extends PDFSubFieldBase {
     public function FormatValue($value,$format='')
     {
         $format=$this->GetFieldOptions('format');
-        $formattedDate=date_i18n($format,$value);
+        $formattedDate=$this->orderValueRetriever->LocalizeDate($value,$format);
         if(!$formattedDate)
             return 'Invalid Format';
         return $formattedDate;

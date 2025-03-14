@@ -27,6 +27,11 @@ class PDFShippingMethod extends PDFSubFieldBase {
     }
 
 
+    public function GetRealFieldValue($format = '')
+    {
+        $value= $this->orderValueRetriever->get($this->GetWCFieldName());
+        return $this->orderValueRetriever->TranslateText('ShippingMethod',$value,$value);
+    }
 
 
 }

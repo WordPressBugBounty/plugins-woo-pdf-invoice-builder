@@ -10,4 +10,12 @@ class PDFPaymentMethodSubField extends PDFSubFieldBase {
     {
         return "payment_method_title";
     }
+
+    public function GetRealFieldValue($format = '')
+    {
+        $value= $this->orderValueRetriever->get($this->GetWCFieldName());
+        return $this->orderValueRetriever->TranslateText('PaymentMethod',$value,$value);
+    }
+
+
 }

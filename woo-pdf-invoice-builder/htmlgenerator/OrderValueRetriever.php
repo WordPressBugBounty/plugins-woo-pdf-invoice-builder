@@ -103,6 +103,33 @@ class OrderValueRetriever
         return $default;
     }
 
+    public function LocalizeDate($unix,$format)
+    {
+        $oldLanguage='';
+        if($this->translator!=null)
+        {
+            $orderLanguage=$this->translator->GetOrderLanguage();
+            $orderLocale=$this->translator->GetLanguageLocale($orderLanguage);
+            if($orderLocale!='')
+            {
+                $currentLanguage=get_locale();
+                if($currentLanguage!=$orderLocale)
+                {
+                    $oldLanguage=$currentLanguage;
+                    switch_to_locale($orderLocale);
+                }
+            }
+        }
+        $value= date_i18n($format,$unix);
+
+        if($oldLanguage!='')
+        {
+            switch_to_locale($oldLanguage);
+        }
+
+        return $value;
+    }
+
     public function TranslateProductName($productName,$product)
     {
         if($this->translator==null)

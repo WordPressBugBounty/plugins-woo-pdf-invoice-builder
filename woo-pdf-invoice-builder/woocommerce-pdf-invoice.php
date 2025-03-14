@@ -5,7 +5,7 @@
  * Description: Attach a PDF Invoice to your woocommerce...
  * Author: RedNao
  * Author URI: http://rednao.com
- * Version: 1.2.137
+ * Version: 1.2.138
  * Text Domain: pdf_invoice_builder
  * Domain Path: /languages/
  * License: GPLv3
@@ -31,7 +31,7 @@ final class RednaoWooCommercePDFInvoice{
     public static $URL;
     public static $DBVERSION=60;
     public static $HOOK_PREFIX;
-    public static $FILE_VERSION=36;
+    public static $FILE_VERSION=39;
     public static $BASE_NAME;
     public static $VERSION='1.2.4';
     public $RootPath;
@@ -189,6 +189,9 @@ final class RednaoWooCommercePDFInvoice{
                 $to=$order->get_billing_email();
 
             }
+
+
+            $to=apply_filters('rnwcinv_get_default_email',$order->get_billing_email(),$order);
 
             if(RednaoWooCommercePDFInvoice::IsPR())
             {

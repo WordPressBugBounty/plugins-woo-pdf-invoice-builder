@@ -51,7 +51,7 @@ class Request
         'PrintNode\ApiKey' => '/account/apikey',
         'PrintNode\Account' => '/account',
         'PrintNode\Tag' => '/account/tag',
-        'PrintNode\Whoami' => '/w'.'hoami',
+        'PrintNode\Whoami' => '/whoami',
         'PrintNode\Computer' => '/computers',
         'PrintNode\Printer' => '/printers',
         'PrintNode\PrintJob' => '/printjobs',

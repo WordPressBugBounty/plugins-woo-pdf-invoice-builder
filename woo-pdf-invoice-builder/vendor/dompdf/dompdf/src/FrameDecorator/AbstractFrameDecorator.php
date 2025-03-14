@@ -14,6 +14,7 @@ use rnDompdf\FrameReflower\AbstractFrameReflower;
 use rnDompdf\Css\Style;
 use rnDompdf\Positioner\AbstractPositioner;
 use rnDompdf\Exception;
+use rnwcinv\utilities\Sanitizer;
 
 /**
  * @package dompdf
@@ -958,7 +959,7 @@ abstract class AbstractFrameDecorator extends Frame
         $originalLimit=\floatval($this->_frame->pdfField->styles->top);
         if($expandable)
             $originalLimit+=floatval($pdfField->DesignerHeight);
-        $originalRight=\floatval($this->_frame->pdfField->styles->left)+floatval($this->_frame->pdfField->styles->width);
+        $originalRight=\floatval($this->_frame->pdfField->styles->left)+floatval(Sanitizer::GetValueFromPath($this->_frame->pdfField->styles,['width']));
         $originalLeft=\floatval($this->_frame->pdfField->styles->left);
         list($height, $margin_top, $margin_bottom, $top, $bottom) = $this->get_reflower()->_calculate_restricted_height();
         $originalStyles=$this->_frame->get_original_style();

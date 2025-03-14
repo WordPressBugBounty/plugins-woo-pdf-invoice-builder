@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=edsev
 Tags: woocommerce pdf invoice, woocommerce invoice, woocommerce, pdf, invoices
 Requires at least: 3.3
 Tested up to: 6.7.1
-Stable tag: 1.2.137
+Stable tag: 1.2.138
 License: GPLv3 or later
 Author URI: https://wooinvoice.rednao.com/
 Plugin URI: https://wooinvoice.rednao.com/
@@ -60,6 +60,10 @@ Didn't find the feature that you needed? [Let us know and we will add it!](https
 
 
 == Latest tutorials ==
+Automate Your WooCommerce PDFs: How to Send the Right Document Every Time
+
+https://www.youtube.com/watch?v=y0qWqZOAYUw
+
 - [WooCommerce pdf invoices & packing slips and How to create them](https://wooinvoice.rednao.com/woocommerce-pdf-invoices-packing-slips-and-how-to-create-them/)
 - [woocommerce-pdf-invoices-top-5-tweaks-you-will-want-to-do](https://wooinvoice.rednao.com/woocommerce-pdf-invoices-packing-slips-creation-guide/woocommerce-pdf-invoices-top-5-tweaks-you-will-want-to-do/)
 - [How to send customer invoice in WooCommerce](https://wooinvoice.rednao.com/woocommerce-pdf-invoices-packing-slips-creation-guide/how-to-send-customer-invoice-in-woocommerce/)
@@ -91,6 +95,9 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 6. WooCommerce PDF Invoice. PDF Packing Slip
 
 == Changelog ==
+= WooCommerce PDF Invoice Builder 1.2.138 =
+* Added clone template feature
+* Fixed issue with custom fields
 = WooCommerce PDF Invoice Builder 1.2.137 =
 * Fixed issue with the custom fields
 = WooCommerce PDF Invoice Builder 1.2.135 =
