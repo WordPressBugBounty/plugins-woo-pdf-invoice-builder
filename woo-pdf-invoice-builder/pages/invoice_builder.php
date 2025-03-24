@@ -97,6 +97,10 @@ $dependencies=apply_filters('wcrbc-pdfbuilder-pdfbuilder-starting',$dependencies
 do_action('rndevtools_initializing_rendering','WooInvoiceBuilder','Builder');
 
 wp_enqueue_media();
+wp_enqueue_script('rnwpdfi_translator',RednaoWooCommercePDFInvoice::$URL.'js/lib/Translator/RNTranslator.js');
+wp_localize_script('rnwpdfi_translator','RNTranslatorDictionary',[]);
+
+
 wp_enqueue_script('wcrbc-pdfbuilder-react',RednaoWooCommercePDFInvoice::$URL.'js/dist/pageBuilderReact_bundle.js',$dependencies);
 wp_enqueue_script('wcrbc-pdfbuilder-velocity',RednaoWooCommercePDFInvoice::$URL.'js/lib/velocity/velocity.min.js',array('jquery'));
 wp_enqueue_script('wcrbc-pdfbuilder-select2',RednaoWooCommercePDFInvoice::$URL.'js/lib/select2/select2.full.js',array('jquery'));
@@ -105,7 +109,7 @@ wp_enqueue_script('wcrbc-pdfbuilder-velocity-async',RednaoWooCommercePDFInvoice:
 //wp_enqueue_script('wcrbc-pdfbuilder-bundle-polyfills',RednaoWooCommercePDFInvoice::$URL.'js/pdfbuilder/release/polyfills.bundle.js',array('wcrbc-pdfbuilder-bundle-inline'),RednaoWooCommercePDFInvoice::$FILE_VERSION,true);
 //wp_enqueue_script('wcrbc-pdfbuilder-bundle-vendor',RednaoWooCommercePDFInvoice::$URL.'js/pdfbuilder/release/vendor.bundle.js',RednaoWooCommercePDFInvoice::$FILE_VERSION,true);
 //wp_enqueue_script('wcrbc-pdfbuilder-bundle-main',RednaoWooCommercePDFInvoice::$URL.'js/pdfbuilder/release/main.bundle.js',array('wcrbc-pdfbuilder-bundle-vendor'),RednaoWooCommercePDFInvoice::$FILE_VERSION,true);
-wp_enqueue_script('wcrbc-bootstrap',RednaoWooCommercePDFInvoice::$URL.'css/bootstrap/js/bootstrap.min.js',array('jquery'),RednaoWooCommercePDFInvoice::$FILE_VERSION,true);
+wp_enqueue_script('wcrbc-bootstrap',RednaoWooCommercePDFInvoice::$URL.'css/bootstrap/js/bootstrap.min.js',array('jquery','rnwpdfi_translator'),RednaoWooCommercePDFInvoice::$FILE_VERSION,true);
 //wp_enqueue_script('wcrbc-pdfbuilder-bundle-style-2',RednaoWooCommercePDFInvoice::$URL.'js/pdfbuilder/release/styles.bundle.js');
 wp_enqueue_script('wcrbc-pdfbuilder-spectrum',RednaoWooCommercePDFInvoice::$URL.'js/lib/spectrum/spectrum.js',array('jquery'));
 wp_enqueue_script('wcrbc-pdfbuilder-bootstrapSlider',RednaoWooCommercePDFInvoice::$URL.'js/lib/bootstrapSlider/bootstrap-slider.js',array('jquery'));
