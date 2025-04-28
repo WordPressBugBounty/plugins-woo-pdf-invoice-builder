@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=edsev
 Tags: woocommerce pdf invoice, woocommerce invoice, woocommerce, pdf, invoices
 Requires at least: 3.3
 Tested up to: 6.8
-Stable tag: 1.2.144
+Stable tag: 1.2.145
 License: GPLv3 or later
 Author URI: https://wooinvoice.rednao.com/
 Plugin URI: https://wooinvoice.rednao.com/
@@ -95,6 +95,8 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 6. WooCommerce PDF Invoice. PDF Packing Slip
 
 == Changelog ==
+= WooCommerce PDF Invoice Builder 1.2.145 =
+* Minor localizing fixes
 = WooCommerce PDF Invoice Builder 1.2.144 =
 * Localizing strings
 = WooCommerce PDF Invoice Builder 1.2.143 =
