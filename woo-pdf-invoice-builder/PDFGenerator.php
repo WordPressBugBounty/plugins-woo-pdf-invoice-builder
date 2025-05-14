@@ -52,6 +52,7 @@ class RednaoPDFGenerator
     public $options;
     public $PreviousResult=null;
     private $SkipSavingPDF=false;
+    public $order;
 
     public function __construct($options,$useTestData=false,$order=null)
     {
