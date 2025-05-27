@@ -64,7 +64,10 @@ class RNBulkActionManager
 
         }else
             $templateId=$_GET['rnTemplateId'];
-        
+
+
+
+        do_action('rnwcinv_before_handle_bulk_action',$action,$post_ids,$templateId);
         if($action=='rnview_invoice')
         {set_time_limit(0);
 
