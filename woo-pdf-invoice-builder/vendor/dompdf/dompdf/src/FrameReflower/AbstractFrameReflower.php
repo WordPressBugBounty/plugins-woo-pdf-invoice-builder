@@ -32,6 +32,7 @@ abstract class AbstractFrameReflower
      * @var Frame
      */
     public $_frame;
+    public $publicFrame;
     /**
      * Cached min/max size
      *
