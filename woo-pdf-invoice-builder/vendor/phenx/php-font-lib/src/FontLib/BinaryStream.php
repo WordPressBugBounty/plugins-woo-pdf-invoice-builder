@@ -139,6 +139,10 @@ class BinaryStream {
       return "";
     }
 
+      if ($this->f==null||!is_resource($this->f)) {
+          return '';
+      }
+
     return fread($this->f, $n);
   }
 

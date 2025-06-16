@@ -13,43 +13,51 @@ if(isset($_GET['action']))
     switch ($_GET['action'])
     {
         case 'clone':
-            if (isset($_GET['id']))
+            if(!wp_verify_nonce($_GET['nonce'],'clone_invoice_'.$_GET['id']))
             {
-                if($count>0&&!RednaoWooCommercePDFInvoice::IsPR())
+                echo '<script type="application/javascript">alert("Invalid nonce, please refresh your screen and try again")</script>';
+
+            }else
+            {
+
+                if (isset($_GET['id']))
                 {
-                    echo '<script type="application/javascript">alert("Sorry, you can have only one invoice template in the free version")</script>';
-
-
-                }else
-                {
-
-
-                    $invoiceId = $_GET['id'];
-                    $template = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . RednaoWooCommercePDFInvoice::$INVOICE_TABLE . ' WHERE invoice_id = %d', $invoiceId));
-                    if ($template)
+                    if ($count > 0 && !RednaoWooCommercePDFInvoice::IsPR())
                     {
-                        $newInvoiceName = $template->name . ' (Clone)';
-                        $wpdb->insert(
-                            RednaoWooCommercePDFInvoice::$INVOICE_TABLE,
-                            array(
-                                'name' => $newInvoiceName,
-                                'attach_to' => $template->attach_to,
-                                'options' => $template->options,
-                                'create_when' => $template->create_when,
-                                'html' => $template->html,
-                                'conditions' => $template->conditions,
-                                'order_actions' => $template->order_actions,
-                                'type' => $template->type,
-                                'my_account_download' => $template->my_account_download,
-                                'extensions' => $template->extensions,
-                                'pages' => $template->pages,
-                                'email_config' => $template->email_config
-                            )
-                        );
-                        echo '<script type="application/javascript">window.location="?page=wc_invoice_menu&id=' . $wpdb->insert_id . '&action=edit"</script>';
+                        echo '<script type="application/javascript">alert("Sorry, you can have only one invoice template in the free version")</script>';
+
+
                     } else
                     {
-                        echo '<script type="application/javascript">alert("Invoice template not found");</script>';
+
+
+                        $invoiceId = $_GET['id'];
+                        $template = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . RednaoWooCommercePDFInvoice::$INVOICE_TABLE . ' WHERE invoice_id = %d', $invoiceId));
+                        if ($template)
+                        {
+                            $newInvoiceName = $template->name . ' (Clone)';
+                            $wpdb->insert(
+                                RednaoWooCommercePDFInvoice::$INVOICE_TABLE,
+                                array(
+                                    'name' => $newInvoiceName,
+                                    'attach_to' => $template->attach_to,
+                                    'options' => $template->options,
+                                    'create_when' => $template->create_when,
+                                    'html' => $template->html,
+                                    'conditions' => $template->conditions,
+                                    'order_actions' => $template->order_actions,
+                                    'type' => $template->type,
+                                    'my_account_download' => $template->my_account_download,
+                                    'extensions' => $template->extensions,
+                                    'pages' => $template->pages,
+                                    'email_config' => $template->email_config
+                                )
+                            );
+                            echo '<script type="application/javascript">window.location="?page=wc_invoice_menu&id=' . $wpdb->insert_id . '&action=edit"</script>';
+                        } else
+                        {
+                            echo '<script type="application/javascript">alert("Invoice template not found");</script>';
+                        }
                     }
                 }
             }
@@ -197,7 +205,7 @@ class InvoiceList extends WP_List_Table
         $actions = array(
             __('edit')      => sprintf('<a href="?page=%s&id=%s&action=%s">Edit</a>','wc_invoice_menu',$item->invoice_id,'edit'),
             __('delete')    => sprintf('<a href="javascript:(function(event){confirm(\'Are you sure you want to delete the form?\')?(window.location=\'?page=%s&id=%s&action=%s&nonce=%s\'):\'\'; return false;})()">Delete</a>','wc_invoice_menu',$item->invoice_id,'delete',wp_create_nonce('delete_invoice_'.$item->invoice_id)),
-            __('clone')      => sprintf('<a href="?page=%s&id=%s&action=%s">Clone</a>','wc_invoice_menu',$item->invoice_id,'clone'),
+            __('clone')      => sprintf('<a href="?page=%s&id=%s&action=%s&nonce=%s">Clone</a>','wc_invoice_menu',$item->invoice_id,'clone',wp_create_nonce('clone_invoice_'.$item->invoice_id)),
         );
 
         return sprintf('%1$s %2$s', $item->name, $this->row_actions($actions) );
