@@ -9,6 +9,7 @@
  */
 namespace rnDompdf\Image;
 
+
 use rnDompdf\Dompdf;
 use rnDompdf\Helpers;
 use rnDompdf\Exception\ImageException;
@@ -57,6 +58,7 @@ class Cache
      */
     static function resolve_url($url, $protocol, $host, $base_path, Dompdf $dompdf)
     {
+        $url=self::MaybeChangeToLocalUrl($url);
         self::$_dompdf = $dompdf;
         
         $protocol = mb_strtolower($protocol);
@@ -144,6 +146,29 @@ class Cache
         }
 
         return array($resolved_url, $type, $message);
+    }
+
+
+
+    public static function MaybeChangeToLocalUrl($url)
+    {
+        $dir=wp_upload_dir();
+        if(strpos($url,$dir['baseurl'])===0)
+        {
+            $newUrl=str_replace($dir['baseurl'],$dir['basedir'],$url);
+            $newUrl=realpath($newUrl);
+
+            if(strpos($newUrl,realpath($dir['basedir']))===0)
+            {
+
+                if (file_exists($newUrl) && is_file($newUrl) && is_array(getimagesize($newUrl)))
+                {
+                    //LogManager::LogDebug('Remote url changed to ' . $newUrl);
+                    return $newUrl;
+                }
+            }
+        }
+        return $url;
     }
 
     /**

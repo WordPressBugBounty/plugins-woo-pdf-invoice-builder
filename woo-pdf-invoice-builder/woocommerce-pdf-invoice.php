@@ -5,7 +5,7 @@
  * Description: Attach a PDF Invoice to your woocommerce...
  * Author: RedNao
  * Author URI: http://rednao.com
- * Version: 1.2.150
+ * Version: 1.2.155
  * Text Domain: pdf_invoice_builder
  * Domain Path: /languages/
  * License: GPLv3
@@ -31,7 +31,7 @@ final class RednaoWooCommercePDFInvoice{
     public static $URL;
     public static $DBVERSION=60;
     public static $HOOK_PREFIX;
-    public static $FILE_VERSION=39;
+    public static $FILE_VERSION=40;
     public static $BASE_NAME;
     public static $VERSION='1.2.4';
     public $RootPath;
@@ -173,6 +173,9 @@ final class RednaoWooCommercePDFInvoice{
 
 
             echo $wpdb->last_error;
+            // For debugging, you can uncomment these lines to see the last query and error.
+            // echo "Last Query: " . $wpdb->last_query;
+            // echo "Last Error: " . $wpdb->last_error;
             $DefaultPrinterId='';
             $DefaultPrinterLabel='';
 
@@ -357,7 +360,7 @@ final class RednaoWooCommercePDFInvoice{
         foreach($files as $currentFile)
         {
             $currentFile=$tmp_path.$currentFile;
-            if(is_dir($currentFile)&&time()-filemtime($currentFile)>60)
+            if(is_dir($currentFile)&&time()-filemtime($currentFile)>86400)
             {
                 self::recursiveRemove($currentFile);
             }

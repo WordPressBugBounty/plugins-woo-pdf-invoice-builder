@@ -426,6 +426,8 @@ class RednaoPDFGenerator
 
         if($getFromDatabase&&!$readOnly)
             $this->SavePDF($getFromDatabase);
+        do_action('rnwcinv_generated',$this);
+
         return true;
 
     }

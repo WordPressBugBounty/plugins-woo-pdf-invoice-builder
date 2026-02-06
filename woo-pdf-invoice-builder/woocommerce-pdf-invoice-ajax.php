@@ -117,7 +117,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
             $order=wc_get_order($orderId);
             if($order==false)
             {
-                echo "Invalid Order Number";
+                echo __("Invalid Order Number","wooinvoicebuilder");
                 die();
             }
 
@@ -683,10 +683,19 @@ final class RednaoWooCommercePDFInvoiceAjax{
 
     public function Export(){
         global $wpdb;
+     
         if(!isset($_POST['pageId']))
         {
             return;
         }
+
+        $nonce=$_POST['nonce'];
+        if(wp_verify_nonce($nonce,'rnwcinv_savenonce')==false)
+        {
+            echo 'Invalid request';
+            die();
+        }
+
         $invoiceData=$wpdb->get_row("select extensions,conditions,attach_to,invoice_id,name,options,type,html,pages from ".RednaoWooCommercePDFInvoice::$INVOICE_TABLE." where invoice_id=".intval($_POST['pageId']));
         if($invoiceData==null){
             return;
@@ -706,6 +715,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
         header("Content-Length: " . filesize($path));
         readfile($path);
 
+        
         $exporter->Destroy();
         die();
     }

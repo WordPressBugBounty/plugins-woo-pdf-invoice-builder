@@ -18,7 +18,7 @@ if($previewType=='orderNumber')
     $order=wc_get_order($orderNumberToPreview);
     if($order==false)
     {
-        echo "invalid order number";
+        echo __("invalid order number","wooinvoicebuilder");
         die();
     }else{
         $generator=\rnwcinv\GeneratorFactory::GetGenerator($pageOptions,$order);
