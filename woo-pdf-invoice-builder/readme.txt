@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=edsev
 Tags: woocommerce pdf invoice, woocommerce invoice, woocommerce, pdf, invoices
 Requires at least: 3.3
 Tested up to: 6.9.1
-Stable tag: 1.2.156
+Stable tag: 1.2.157
 License: GPLv3 or later
 Author URI: https://wooinvoice.rednao.com/
 Plugin URI: https://wooinvoice.rednao.com/
@@ -95,6 +95,8 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 6. WooCommerce PDF Invoice. PDF Packing Slip
 
 == Changelog ==
+= WooCommerce PDF Invoice Builder 1.2.157 =
+* Fixed issue with hpos integration
 = WooCommerce PDF Invoice Builder 1.2.152 =
 * Folder cleanup fix 
 = WooCommerce PDF Invoice Builder 1.2.149 =
