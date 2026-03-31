@@ -5,7 +5,7 @@
  * Description: Attach a PDF Invoice to your woocommerce...
  * Author: RedNao
  * Author URI: http://rednao.com
- * Version: 1.2.157
+ * Version: 1.2.159
  * Text Domain: pdf_invoice_builder
  * Domain Path: /languages/
  * License: GPLv3
@@ -16,6 +16,7 @@
 use rnwcinv\bulk_actions\RNBulkActionManager;
 use rnwcinv\compatibility\RemoveGlobalInvoiceNumbers;
 use rnwcinv\htmlgenerator\OrderValueRetriever;
+use rnwcinv\Managers\LogManager;
 use rnwcinv\pr\Translation\PDFTranslationBase;
 use rnwcinv\pr\Translation\PDFTranslatorFactory;
 use rnwcinv\utilities\RNIoC;
@@ -72,6 +73,7 @@ final class RednaoWooCommercePDFInvoice
 
 
         RednaoWooCommercePDFInvoice::$IoC = new RNIoC();
+        LogManager::Initialize();
         if (RednaoWooCommercePDFInvoice::IsPR()) {
             require_once(RednaoWooCommercePDFInvoice::$DIR . 'pr/woocommerce-pdf-pr.php');
         }

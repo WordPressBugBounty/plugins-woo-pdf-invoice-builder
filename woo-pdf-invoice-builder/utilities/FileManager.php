@@ -99,5 +99,11 @@ class FileManager
 
     }
 
+    public function GetLoggerPath()
+    {
+        $logFolder = $this->GetRootFolderPath() . 'log/';
+        $this->MaybeCreateFolder($logFolder, true);
+        return $logFolder;
+    }
 
 }
