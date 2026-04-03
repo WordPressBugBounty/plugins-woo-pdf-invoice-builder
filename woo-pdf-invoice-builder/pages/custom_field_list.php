@@ -18,7 +18,7 @@ if(isset($_GET['action']))
 
             if($count>3&&!RednaoWooCommercePDFInvoice::IsPR())
             {
-                echo '<script type="application/javascript">alert("Sorry, you can have only three custom fields in the free version")</script>';
+                echo '<script type="application/javascript">alert("'.esc_js(__('Sorry, you can have only three custom fields in the free version','woo-pdf-invoice-builder')).'")</script>';
 
             }else
             {
@@ -63,7 +63,7 @@ wp_enqueue_style('wcrbc-bootstrap-theme',RednaoWooCommercePDFInvoice::$URL.'css/
 
 ?>
     <div class="bootstrap-wrapper">
-        <button class="btn btn-success createInvoice" href="#" style="margin-top: 10px;" ><span class="glyphicon glyphicon-plus" style="padding-right:10px;"></span>Create New Custom Field</button>
+        <button class="btn btn-success createInvoice" href="#" style="margin-top: 10px;" ><span class="glyphicon glyphicon-plus" style="padding-right:10px;"></span><?php echo esc_html__('Create New Custom Field','woo-pdf-invoice-builder');?></button>
     </div>
 
 
@@ -73,7 +73,7 @@ class InvoiceList extends WP_List_Table
     function get_columns()
     {
         return array(
-            'custom_field_name'=>__('Field Name')
+            'custom_field_name'=>__('Field Name','woo-pdf-invoice-builder')
         );
     }
 
@@ -124,8 +124,8 @@ class InvoiceList extends WP_List_Table
 
     function column_custom_field_name($item) {
         $actions = array(
-            __('edit')      => sprintf('<a href="?page=%s&id=%s&action=%s">Edit</a>','invoice-builder-custom-fields',$item->custom_field_id,'edit'),
-            __('delete')    => sprintf('<a href="javascript:(function(event){confirm(\'Are you sure you want to delete the field?\')?(window.location=\'?page=%s&id=%s&action=%s\'):\'\';event.returnValue=false; return false;})()">Delete</a>','invoice-builder-custom-fields',$item->custom_field_id,'delete')
+            __('edit','woo-pdf-invoice-builder')      => sprintf('<a href="?page=%s&id=%s&action=%s">'.esc_html__('Edit','woo-pdf-invoice-builder').'</a>','invoice-builder-custom-fields',$item->custom_field_id,'edit'),
+            __('delete','woo-pdf-invoice-builder')    => sprintf('<a href="javascript:(function(event){confirm(\''.esc_js(__('Are you sure you want to delete the field?','woo-pdf-invoice-builder')).'\')?(window.location=\'?page=%s&id=%s&action=%s\'):\'\';event.returnValue=false; return false;})()">'.esc_html__('Delete','woo-pdf-invoice-builder').'</a>','invoice-builder-custom-fields',$item->custom_field_id,'delete')
         );
 
         return sprintf('%1$s %2$s', $item->custom_field_name, $this->row_actions($actions) );
@@ -136,7 +136,7 @@ echo '<form method="get">';
 echo "<input type='hidden' name='page' value='invoice-builder-custom-fields'/>";
 $invoiceList=new InvoiceList();
 $invoiceList->prepare_items();
-$invoiceList->search_box('Search Custom Field','custom_field_name');
+$invoiceList->search_box(__('Search Custom Field','woo-pdf-invoice-builder'),'custom_field_name');
 $invoiceList->display();
 echo '</form>';
 ?>

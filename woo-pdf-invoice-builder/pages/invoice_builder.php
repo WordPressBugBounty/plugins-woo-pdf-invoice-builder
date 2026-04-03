@@ -94,11 +94,12 @@ wp_enqueue_script('wcrbc-pdfbuilder-shared',RednaoWooCommercePDFInvoice::$URL.'j
 
 $dependencies=apply_filters('wcrbc-pdfbuilder-pdfbuilder-starting',$dependencies);
 
-do_action('rndevtools_initializing_rendering','WooInvoiceBuilder','Builder');
+do_action('rndevtools_initializing_rendering','woo-pdf-invoice-builder','Builder');
 
 wp_enqueue_media();
 wp_enqueue_script('rnwpdfi_translator',RednaoWooCommercePDFInvoice::$URL.'js/lib/Translator/RNTranslator.js');
-wp_localize_script('rnwpdfi_translator','RNTranslatorDictionary',[]);
+$pageBuilderTranslations = require(RednaoWooCommercePDFInvoice::$DIR . 'jstranslations/pageBuilderReact.php');
+wp_localize_script('rnwpdfi_translator','RNTranslatorDictionary', $pageBuilderTranslations);
 
 
 wp_enqueue_script('wcrbc-pdfbuilder-react',RednaoWooCommercePDFInvoice::$URL.'js/dist/pageBuilderReact_bundle.js',$dependencies);

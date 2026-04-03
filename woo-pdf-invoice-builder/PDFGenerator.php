@@ -153,7 +153,7 @@ class RednaoPDFGenerator
             }
         }
 
-        echo __('Sorry there is any pdf template suitable for this order, please make sure you configured a pdf template and that the template does not have conditions or that the condition is valid for this order',"wooinvoicebuilder");
+        echo __('Sorry there is any pdf template suitable for this order, please make sure you configured a pdf template and that the template does not have conditions or that the condition is valid for this order',"woo-pdf-invoice-builder");
     }
 
     public static function GetPageOptionsById($invoiceTemplateId = -1)

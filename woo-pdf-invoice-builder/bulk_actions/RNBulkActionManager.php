@@ -1,203 +1,126 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Edgar
- * Date: 11/18/2018
- * Time: 7:45 AM
- */
 
 namespace rnwcinv\bulk_actions;
 
-
-
-use RednaoPDFGenerator;
 use RednaoWooCommercePDFInvoice;
-use rnwcinv\GeneratorFactory;
-use rnwcinv\pr\htmlgenerator\merger\MergeItem;
-use rnwcinv\pr\htmlgenerator\merger\PDFMerger;
-use rnwcinv\pr\utilities\Printer\Printer;
-
 
 class RNBulkActionManager
 {
-    public function InitializeHooks(){
+    public function InitializeHooks()
+    {
+        add_filter("bulk_actions-woocommerce_page_wc-orders", array($this, 'AddBulkActions'));
+        add_filter('handle_bulk_actions-woocommerce_page_wc-orders', array($this, 'HandleBulkAction'), 10, 3);
+        add_filter("bulk_actions-edit-shop_order", array($this, 'AddBulkActions'));
+        add_filter('handle_bulk_actions-edit-shop_order', array($this, 'HandleBulkAction'), 10, 3);
+        add_action('admin_enqueue_scripts', array($this, 'EnqueueScript'));
 
-        add_filter( "bulk_actions-woocommerce_page_wc-orders", array($this,'AddBulkActions') );
-        add_filter( 'handle_bulk_actions-woocommerce_page_wc-orders',array($this,'HandleBulkAction'), 10, 3);
-        add_filter( "bulk_actions-edit-shop_order", array($this,'AddBulkActions') );
-        add_filter( 'handle_bulk_actions-edit-shop_order',array($this,'HandleBulkAction'), 10, 3);
-        add_action( 'admin_enqueue_scripts', array($this,'EnqueueScript'));
+        if (RednaoWooCommercePDFInvoice::IsPR()) {
+            // Register the premium AJAX handler (schedules its own cleanup cron)
+            new \rnwcinv\pr\bulk_actions\RNBulkActionAjax();
+        }
     }
 
-    public function EnqueueScript(){
+    public function EnqueueScript()
+    {
+        $screen = get_current_screen();
 
-        $screen=get_current_screen();
-        if($screen==null||$screen->post_type!='shop_order')
+        // Support both HPOS and legacy screen detection
+        $isOrderScreen = false;
+        if ($screen != null) {
+            if ($screen->post_type == 'shop_order') {
+                $isOrderScreen = true;
+            }
+            if (function_exists('wc_get_page_screen_id') && $screen->id === wc_get_page_screen_id('shop-order')) {
+                $isOrderScreen = true;
+            }
+        }
+
+        if (!$isOrderScreen) {
             return;
+        }
 
-        \wp_enqueue_script('rednao_pdfinv_bulk_manager',RednaoWooCommercePDFInvoice::$URL.'js/bulkManager/BulkManager.js');
+        // Enqueue the bulk manager JS
+        wp_enqueue_script(
+            'rednao_pdfinv_bulk_manager',
+            RednaoWooCommercePDFInvoice::$URL . 'js/bulkManager/BulkManager.js',
+            array('jquery'),
+            RednaoWooCommercePDFInvoice::$FILE_VERSION,
+            true
+        );
+
+        // Enqueue the progress popup CSS
+        wp_enqueue_style(
+            'rednao_pdfinv_bulk_actions_css',
+            RednaoWooCommercePDFInvoice::$URL . 'css/bulkActions.css',
+            array(),
+            RednaoWooCommercePDFInvoice::$FILE_VERSION
+        );
 
         global $wpdb;
-        $invoices=$wpdb->get_results('select invoice_id InvoiceID, name Name from '.RednaoWooCommercePDFInvoice::$INVOICE_TABLE .' order by name');
+        $invoices = $wpdb->get_results('select invoice_id InvoiceID, name Name from ' . RednaoWooCommercePDFInvoice::$INVOICE_TABLE . ' order by name');
+        $invoices = apply_filters('rnwcinv_bulk_invoices', $invoices);
 
-        $invoices=apply_filters('rnwcinv_bulk_invoices',$invoices);
+        wp_localize_script('rednao_pdfinv_bulk_manager', 'bulkManagerVar', array(
+            'invoices' => $invoices,
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'bulkNonce' => wp_create_nonce('rednao_bulk_action_nonce'),
+            'isPr' => RednaoWooCommercePDFInvoice::IsPR(),
+            'selectAPDFTemplate' => __("Select a pdf template", "woo-pdf-invoice-builder"),
 
-        \wp_localize_script('rednao_pdfinv_bulk_manager','bulkManagerVar',array(
-            'invoices'=>$invoices,
-            'selectAPDFTemplate'=>__("Select a pdf template","wooinvoicebuilder")
+            // Progress popup translations
+            'processingPDFs' => __("Processing PDF invoices...", "woo-pdf-invoice-builder"),
+            'preparing' => __("Preparing...", "woo-pdf-invoice-builder"),
+            'cancel' => __("Cancel", "woo-pdf-invoice-builder"),
+            'cancelling' => __("Cancelling...", "woo-pdf-invoice-builder"),
+            'close' => __("Close", "woo-pdf-invoice-builder"),
+            'finalizing' => __("Finalizing...", "woo-pdf-invoice-builder"),
+            'creatingZip' => __("Creating ZIP file...", "woo-pdf-invoice-builder"),
+            'mergingPDFs' => __("Merging PDFs...", "woo-pdf-invoice-builder"),
+            'processingXofY' => __("Processing {current} of {total}", "woo-pdf-invoice-builder"),
+            'generatingPDF' => __("Generating PDF for order #{orderId}...", "woo-pdf-invoice-builder"),
+            'noOrdersSelected' => __("Please select at least one order.", "woo-pdf-invoice-builder"),
+            'serverError' => __("Server error. Please try again.", "woo-pdf-invoice-builder"),
+            'errorProcessingOrder' => __("Error processing order #{orderId}: {message}", "woo-pdf-invoice-builder"),
+            'printSuccess' => __("Invoices sent to printer successfully!", "woo-pdf-invoice-builder"),
+            'printFailed' => __("Could not send invoices to printer. Please check your printer configuration.", "woo-pdf-invoice-builder"),
+            'bulkView' => __("Bulk View Invoices", "woo-pdf-invoice-builder"),
+            'bulkPrint' => __("Bulk Print Invoices", "woo-pdf-invoice-builder"),
+            'bulkDownload' => __("Bulk Download Invoices", "woo-pdf-invoice-builder"),
+            'fullVersionOnly' => __("Sorry, this feature is only available in the full version.", "woo-pdf-invoice-builder"),
         ));
-
     }
 
-    public function HandleBulkAction( $redirect_to, $action, $post_ids ) {
-
-
-        if(!RednaoWooCommercePDFInvoice::IsPR())
-            return $redirect_to;
-        ini_set('max_execution_time', 300000);
-        require_once RednaoWooCommercePDFInvoice::$DIR.'PDFGenerator.php';
-        $templateId='';
-        if(!isset($_GET['rnTemplateId']))
-        {
-            $options=RednaoPDFGenerator::GetPageOptionsById(-1);
-            $templateId=$options->invoiceTemplateId;
-
-        }else
-            $templateId=$_GET['rnTemplateId'];
-
-
-
-        do_action('rnwcinv_before_handle_bulk_action',$action,$post_ids,$templateId);
-        if($action=='rnview_invoice')
-        {set_time_limit(0);
-
-            $mergeItems=array();
-            foreach($post_ids as $invoiceId)
-            {
-
-                $mergeItems[]=new MergeItem($invoiceId,$templateId);
-            }
-
-            $merger=new PDFMerger();
-            $merger->Merge($mergeItems);
-            $merger->Stream();
-            die();
-        }
-
-
-        if($action=='rnprint_invoice')
-        {
-
-            $invoiceOptions=\RednaoPDFGenerator::GetPageOptionsById($templateId);
-            foreach($post_ids as $invoice)
-            {
-                $order=wc_get_order($invoice);
-                if($order==false)
-                {
-                    echo "Invalid Order Number";
-                    die();
-                }
-
-                require_once RednaoWooCommercePDFInvoice::$DIR. 'PDFGenerator.php';
-                $generator=GeneratorFactory::GetGenerator($invoiceOptions,$order);
-                $generator->Generate(true,true);
-                $printer=new Printer();
-                $printer->PrintPDF($generator->GetFileName(),$generator->GetPrintableOutput());
-
-            }
-
-            echo '<div class="updated"><p>'.__('Invoices printed successfully','wooinvoicebuilder').'</p></div>';
+    /**
+     * Handle bulk action — now just returns redirect since processing is done via AJAX
+     * This is kept as a safety fallback in case the JS interception doesn't fire
+     */
+    public function HandleBulkAction($redirect_to, $action, $post_ids)
+    {
+        if (!RednaoWooCommercePDFInvoice::IsPR()) {
             return $redirect_to;
         }
 
-        if($action=='rndownload_invoice')
-        {
-            set_time_limit(0);
-            require_once RednaoWooCommercePDFInvoice::$DIR.'PDFGenerator.php';
-
-
-
-
-
-            $uploadDir = wp_upload_dir();
-
-            $path = $uploadDir['basedir'] . '/sf_pdfs_bulk';
-
-            $zip = new \ZipArchive();
-            $zip->open($path . 'documents.zip', \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
-            $usedNames=[];
-            foreach ($post_ids as $invoice)
-            {
-                $order = wc_get_order($invoice);
-                if ($order == false)
-                {
-                    echo "Invalid Order Number";
-                    die();
-                }
-
-                $generator = GeneratorFactory::GetGenerator(RednaoPDFGenerator::GetPageOptionsById($templateId), $order);
-                $generator->Generate(true, true);
-                $name=$generator->GetFileName();
-                $nameToCheck=strtolower($name);
-                $index=1;
-                while(array_search($nameToCheck,$usedNames)!==false)
-                {
-                    $nameToCheck=strtolower($name).'('.$index.')';
-                    $index++;
-                }
-                $usedNames[]=$nameToCheck;
-                $zip->addFromString($nameToCheck. '.pdf', $generator->GetOutput());
-            }
-            $zip->close();
-
-            header("Content-Type: application/zip");
-            header("Content-Disposition: attachment; filename=documents.zip");
-            header("Content-Length: " . filesize($path.'documents.zip'));
-            readfile($path.'documents.zip');
-
-
-            $files = glob($path.'*'); // get all file names
-            foreach($files as $file){ // iterate files
-                if(is_file($file))
-                    unlink($file); // delete file
-            }
-
-            die();
-
+        // All bulk actions are now handled client-side via AJAX queue
+        // This handler only fires if JS fails to intercept (e.g. noscript)
+        if (in_array($action, array('rnview_invoice', 'rnprint_invoice', 'rndownload_invoice'))) {
+            // Add a query arg to inform the user to enable JavaScript
+            return add_query_arg(array('rn_bulk_notice' => 'js_required'), $redirect_to);
         }
-
 
         return $redirect_to;
-       /* if ( $action !== 'write_downloads' )
-            return $redirect_to; // Exit
-
-        global $attach_download_dir, $attach_download_file; // ???
-
-        $processed_ids = array();
-
-        foreach ( $post_ids as $post_id ) {
-            $order = wc_get_order( $post_id );
-            $order_data = $order->get_data();
-
-            // Your code to be executed on each selected order
-            $processed_ids[] = $post_id;
-        }
-
-        return $redirect_to = add_query_arg( array(
-            'write_downloads' => '1',
-            'processed_count' => count( $processed_ids ),
-            'processed_ids' => implode( ',', $processed_ids ),
-        ), $redirect_to );*/
     }
 
-
-
-    public function AddBulkActions($actions){
-
-       $actions['rnview_invoice'] = __('Bulk view invoices (full version only)','wooinvoicebuilder');
-       $actions['rnprint_invoice'] = __('Bulk print invoices (full version only)','wooinvoicebuilder');
-       $actions['rndownload_invoice'] = __('Bulk download invoices (full version only)','wooinvoicebuilder');
+    public function AddBulkActions($actions)
+    {
+        if (RednaoWooCommercePDFInvoice::IsPR()) {
+            $actions['rnview_invoice'] = __('Bulk view invoices', 'woo-pdf-invoice-builder');
+            $actions['rnprint_invoice'] = __('Bulk print invoices', 'woo-pdf-invoice-builder');
+            $actions['rndownload_invoice'] = __('Bulk download invoices', 'woo-pdf-invoice-builder');
+        } else {
+            $actions['rnview_invoice'] = __('Bulk view invoices (full version only)', 'woo-pdf-invoice-builder');
+            $actions['rnprint_invoice'] = __('Bulk print invoices (full version only)', 'woo-pdf-invoice-builder');
+            $actions['rndownload_invoice'] = __('Bulk download invoices (full version only)', 'woo-pdf-invoice-builder');
+        }
         return $actions;
     }
-
 }

@@ -15,7 +15,7 @@ if(isset($_GET['action']))
         case 'clone':
             if(!wp_verify_nonce($_GET['nonce'],'clone_invoice_'.$_GET['id']))
             {
-                echo '<script type="application/javascript">alert("Invalid nonce, please refresh your screen and try again")</script>';
+                echo '<script type="application/javascript">alert("'.esc_js(__('Invalid nonce, please refresh your screen and try again','woo-pdf-invoice-builder')).'")</script>';
 
             }else
             {
@@ -24,7 +24,7 @@ if(isset($_GET['action']))
                 {
                     if ($count > 0 && !RednaoWooCommercePDFInvoice::IsPR())
                     {
-                        echo '<script type="application/javascript">alert("Sorry, you can have only one invoice template in the free version")</script>';
+                        echo '<script type="application/javascript">alert("'.esc_js(__('Sorry, you can have only one invoice template in the free version','woo-pdf-invoice-builder')).'")</script>';
 
 
                     } else
@@ -56,7 +56,7 @@ if(isset($_GET['action']))
                             echo '<script type="application/javascript">window.location="?page=wc_invoice_menu&id=' . $wpdb->insert_id . '&action=edit"</script>';
                         } else
                         {
-                            echo '<script type="application/javascript">alert("Invoice template not found");</script>';
+                            echo '<script type="application/javascript">alert("'.esc_js(__('Invoice template not found','woo-pdf-invoice-builder')).'");</script>';
                         }
                     }
                 }
@@ -66,7 +66,7 @@ if(isset($_GET['action']))
 
             if($count>0&&!RednaoWooCommercePDFInvoice::IsPR())
             {
-                echo '<script type="application/javascript">alert("Sorry, you can have only one invoice template in the free version")</script>';
+                echo '<script type="application/javascript">alert("'.esc_js(__('Sorry, you can have only one invoice template in the free version','woo-pdf-invoice-builder')).'")</script>';
 
             }else
             {
@@ -83,7 +83,7 @@ if(isset($_GET['action']))
             $invoiceId=$_GET['id'];
             if(!wp_verify_nonce($_GET['nonce'],'delete_invoice_'.$_GET['id']))
             {
-                echo '<script type="application/javascript">alert("Invalid nonce, please refresh your screen and try again")</script>';
+                echo '<script type="application/javascript">alert("'.esc_js(__('Invalid nonce, please refresh your screen and try again','woo-pdf-invoice-builder')).'")</script>';
             }else
             {
 
@@ -123,9 +123,9 @@ wp_enqueue_style('wcrbc-bootstrap-theme',RednaoWooCommercePDFInvoice::$URL.'css/
 
 ?>
     <div class="bootstrap-wrapper">
-        <button class="btn btn-success createInvoice" href="#" style="margin-top: 10px;" ><span class="glyphicon glyphicon-plus" style="padding-right:10px;"></span>Create New Invoice</button>
+        <button class="btn btn-success createInvoice" href="#" style="margin-top: 10px;" ><span class="glyphicon glyphicon-plus" style="padding-right:10px;"></span><?php echo esc_html__('Create New Invoice','woo-pdf-invoice-builder');?></button>
 
-        <button id="invoiceImport" class="btn btn-warning" href="#" style="margin-top: 10px;" ><span class="glyphicon glyphicon-import" style="padding-right:10px;"></span>Import</button>
+        <button id="invoiceImport" class="btn btn-warning" href="#" style="margin-top: 10px;" ><span class="glyphicon glyphicon-import" style="padding-right:10px;"></span><?php echo esc_html__('Import','woo-pdf-invoice-builder');?></button>
             <form action="?page=wc_invoice_menu&action=import" method="post" enctype="multipart/form-data" id="formImporter" style="display: none;">
                 <input name="files" accept=".zip" type="file" id="fileToImport"/>
 
@@ -141,7 +141,7 @@ class InvoiceList extends WP_List_Table
     function get_columns()
     {
         return array(
-            'name'=>__('Template Name')
+            'name'=>__('Template Name','woo-pdf-invoice-builder')
         );
     }
 
@@ -203,9 +203,9 @@ class InvoiceList extends WP_List_Table
 
     function column_name($item) {
         $actions = array(
-            __('edit')      => sprintf('<a href="?page=%s&id=%s&action=%s">Edit</a>','wc_invoice_menu',$item->invoice_id,'edit'),
-            __('delete')    => sprintf('<a href="javascript:(function(event){confirm(\'Are you sure you want to delete the form?\')?(window.location=\'?page=%s&id=%s&action=%s&nonce=%s\'):\'\'; return false;})()">Delete</a>','wc_invoice_menu',$item->invoice_id,'delete',wp_create_nonce('delete_invoice_'.$item->invoice_id)),
-            __('clone')      => sprintf('<a href="?page=%s&id=%s&action=%s&nonce=%s">Clone</a>','wc_invoice_menu',$item->invoice_id,'clone',wp_create_nonce('clone_invoice_'.$item->invoice_id)),
+            __('edit','woo-pdf-invoice-builder')      => sprintf('<a href="?page=%s&id=%s&action=%s">'.esc_html__('Edit','woo-pdf-invoice-builder').'</a>','wc_invoice_menu',$item->invoice_id,'edit'),
+            __('delete','woo-pdf-invoice-builder')    => sprintf('<a href="javascript:(function(event){confirm(\''.esc_js(__('Are you sure you want to delete the form?','woo-pdf-invoice-builder')).'\')?(window.location=\'?page=%s&id=%s&action=%s&nonce=%s\'):\'\'; return false;})()">'.esc_html__('Delete','woo-pdf-invoice-builder').'</a>','wc_invoice_menu',$item->invoice_id,'delete',wp_create_nonce('delete_invoice_'.$item->invoice_id)),
+            __('clone','woo-pdf-invoice-builder')      => sprintf('<a href="?page=%s&id=%s&action=%s&nonce=%s">'.esc_html__('Clone','woo-pdf-invoice-builder').'</a>','wc_invoice_menu',$item->invoice_id,'clone',wp_create_nonce('clone_invoice_'.$item->invoice_id)),
         );
 
         return sprintf('%1$s %2$s', $item->name, $this->row_actions($actions) );
@@ -217,7 +217,7 @@ echo '<form method="get">';
 echo "<input type='hidden' name='page' value='wc_invoice_menu'/>";
 $invoiceList=new InvoiceList();
 $invoiceList->prepare_items();
-$invoiceList->search_box('Search Template','Name');
+$invoiceList->search_box(__('Search Template','woo-pdf-invoice-builder'),'Name');
 $invoiceList->display();
 echo '</form>';
 ?>

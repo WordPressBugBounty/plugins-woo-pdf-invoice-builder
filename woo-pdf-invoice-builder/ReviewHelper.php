@@ -68,7 +68,7 @@ greatly help me promote and keep growing this plugin that i love and i hope it h
 
     private function GetContent()
     {
-        return sprintf($this->currentStage['content'],$this->count);
+        return sprintf(__($this->currentStage['content'],'woo-pdf-invoice-builder'),$this->count);
 
 
     }
@@ -123,11 +123,11 @@ greatly help me promote and keep growing this plugin that i love and i hope it h
                             <div style="display: inline-block; vertical-align: top;margin-left: 5px;"><span style="font-size: 16px;font-family: Verdana"><p style="padding-bottom: 1px;margin-bottom: 0;"><?php echo $this->GetContent()?></p>
                                             <p style="font-size: 13px;padding-top:0;margin-top:0;font-style: italic;">-Edgar Rojas</p>
                                             <ul style="list-style: circle;margin-left: 30px;">
-                                                <li><a target="_blank" style="display: block" href="https://wordpress.org/support/plugin/woo-pdf-invoice-builder/reviews/?filter=5"><?php echo $this->currentStage['Reviewlink']?></a></li>
+                                                <li><a target="_blank" style="display: block" href="https://wordpress.org/support/plugin/woo-pdf-invoice-builder/reviews/?filter=5"><?php echo esc_html__($this->currentStage['Reviewlink'],'woo-pdf-invoice-builder')?></a></li>
                                                 <?php if(isset($this->currentStage['Remindmelink'])){?>
-                                                <li><a id="wopdfinvoicerml" style="display: block" href="https://wordpress.org/support/plugin/woo-pdf-invoice-builder/reviews/?filter=5"><?php echo $this->currentStage['Remindmelink']?></a></li>
+                                                <li><a id="wopdfinvoicerml" style="display: block" href="https://wordpress.org/support/plugin/woo-pdf-invoice-builder/reviews/?filter=5"><?php echo esc_html__($this->currentStage['Remindmelink'],'woo-pdf-invoice-builder')?></a></li>
                                                 <?php } ?>
-                                                <li><a id="wopdfinvoicedsa" style="display: block" href="https://wordpress.org/support/plugin/woo-pdf-invoice-builder/reviews/?filter=5"><?php echo $this->currentStage['DontShowAgain']?></a></li>
+                                                <li><a id="wopdfinvoicedsa" style="display: block" href="https://wordpress.org/support/plugin/woo-pdf-invoice-builder/reviews/?filter=5"><?php echo esc_html__($this->currentStage['DontShowAgain'],'woo-pdf-invoice-builder')?></a></li>
                                             </ul>
                             </div>
                         </td>

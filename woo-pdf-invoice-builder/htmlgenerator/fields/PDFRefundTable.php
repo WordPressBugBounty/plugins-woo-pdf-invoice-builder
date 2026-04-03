@@ -393,7 +393,7 @@ class PDFRefundTable extends PDFFieldBase
 
             if($excludeCarrier)
                 return $price;
-            return $price.' '.__("via","wooinvoicebuilder").' '.implode(', ',$carrier);
+            return $price.' '.__("via","woo-pdf-invoice-builder").' '.implode(', ',$carrier);
         }
 
         if($totalType=='discount')

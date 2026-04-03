@@ -5,12 +5,12 @@
  * Description: Attach a PDF Invoice to your woocommerce...
  * Author: RedNao
  * Author URI: http://rednao.com
- * Version: 1.2.159
- * Text Domain: pdf_invoice_builder
+ * Version: 1.2.163
+ * Text Domain: woo-pdf-invoice-builder
  * Domain Path: /languages/
  * License: GPLv3
  * License URI: http://www.gnu.org/licenses/gpl-3.0
- * Slug: pdf-invoice-builder
+ * Slug: woo-pdf-invoice-builder
  */
 
 use rnwcinv\bulk_actions\RNBulkActionManager;
@@ -50,9 +50,6 @@ final class RednaoWooCommercePDFInvoice
     public function __construct()
     {
 
-        load_plugin_textdomain('wooinvoicebuilder', false, plugin_basename(dirname(__FILE__)) . '/languages/');
-
-
         global $RednaoWooCommercePDFInvoiceInstance;
         $RednaoWooCommercePDFInvoiceInstance = $this;
         $this->RootPath = __FILE__;
@@ -86,6 +83,11 @@ final class RednaoWooCommercePDFInvoice
 
     }
 
+    public function LoadTextDomain()
+    {
+        load_plugin_textdomain('woo-pdf-invoice-builder', false, plugin_basename(dirname(__FILE__)) . '/languages/');
+    }
+
 
     public function GetConfig($configName, $defaultValue = '')
     {
@@ -96,12 +98,13 @@ final class RednaoWooCommercePDFInvoice
     }
 
     public static function IsPR()
-    {
+    {        
         return file_exists(RednaoWooCommercePDFInvoice::$DIR . 'pr/woocommerce-pdf-pr.php');
     }
 
     private function DefineHooks()
     {
+        add_action('init', array($this, 'LoadTextDomain'));
         add_action('admin_menu', array($this, 'HookCreateMenu'));
         add_action('woocommerce_thankyou', array($this, 'WooCommerceThankYou'));
         add_action('add_meta_boxes', array($this, 'AddOrderMetaBox'));
@@ -467,17 +470,17 @@ final class RednaoWooCommercePDFInvoice
         $orderActions = \rnwcinv\Managers\OrderActionsManager::GetOrderActions();
         if (count($orderActions) == 0) {
             $url = wp_nonce_url(admin_url("admin-ajax.php?action=rednao_wcpdfinv_generate_pdf&orderid=" . $order->get_id()), 'rednao_wcpdfinv_generate_pdf_' . $order->get_id());
-            echo '<a style="display:inline-flex;align-items:center;justify-content:center"  href="' . $url . '" class="button tips wpo_wcpdf" target="_blank" alt="View PDF" data-tip="View PDF">' .
+            echo '<a style="display:inline-flex;align-items:center;justify-content:center"  href="' . $url . '" class="button tips wpo_wcpdf" target="_blank" alt="' . esc_attr__('View PDF', 'woo-pdf-invoice-builder') . '" data-tip="' . esc_attr__('View PDF', 'woo-pdf-invoice-builder') . '">' .
                 '<img src="' . RednaoWooCommercePDFInvoice::$URL . 'images/invoice.png" width="16"></a>';
         } else {
             foreach ($orderActions as $currentAction) {
                 $label = '';
                 switch ($currentAction->Id) {
                     case "Download":
-                        $label = __('Download', 'wooinvoicebuilder');
+                        $label = __('Download', 'woo-pdf-invoice-builder');
                         break;
                     case 'View':
-                        $label = __('View', 'wooinvoicebuilder');
+                        $label = __('View', 'woo-pdf-invoice-builder');
                         break;
 
                 }
@@ -567,7 +570,7 @@ final class RednaoWooCommercePDFInvoice
         }
 
         $wc_screen_id = \wc_get_page_screen_id('shop-order');
-        add_meta_box('rednao_order_invoice', __('PDF Invoice', 'wooinvoicebuilder'), array(
+        add_meta_box('rednao_order_invoice', __('PDF Invoice', 'woo-pdf-invoice-builder'), array(
             $this,
             'DisplayMetaBox',
         ), $wc_screen_id, 'side', 'high');
@@ -582,17 +585,17 @@ final class RednaoWooCommercePDFInvoice
 
     public function HookCreateMenu()
     {
-        add_menu_page('WC Invoice', 'WC Invoice', 'manage_options', "wc_invoice_menu", array($this, 'CreateMenu')/*,plugin_dir_url(__FILE__).'images/smartFormsIcon.png'*/);
-        add_submenu_page("wc_invoice_menu", 'Manage Invoices', 'Manage Invoices', 'manage_options', __FILE__ . 'manage_invoices', array($this, 'ManageInvoices'));
+        add_menu_page(__('WC Invoice', 'woo-pdf-invoice-builder'), __('WC Invoice', 'woo-pdf-invoice-builder'), 'manage_options', "wc_invoice_menu", array($this, 'CreateMenu')/*,plugin_dir_url(__FILE__).'images/smartFormsIcon.png'*/);
+        add_submenu_page("wc_invoice_menu", __('Manage Invoices', 'woo-pdf-invoice-builder'), __('Manage Invoices', 'woo-pdf-invoice-builder'), 'manage_options', __FILE__ . 'manage_invoices', array($this, 'ManageInvoices'));
 
-        add_submenu_page("wc_invoice_menu", 'Documentation/Support', 'Documentation/Help', 'manage_options', __FILE__ . 'wish_list', array($this, 'SupportMenu'));
-        add_submenu_page("wc_invoice_menu", 'Blank page/500 error resolver', 'Blank page/500 error resolver', 'manage_options', __FILE__ . 'errorresolver', array($this, 'ErrorResolver'));
+        add_submenu_page("wc_invoice_menu", __('Documentation/Support', 'woo-pdf-invoice-builder'), __('Documentation/Help', 'woo-pdf-invoice-builder'), 'manage_options', __FILE__ . 'wish_list', array($this, 'SupportMenu'));
+        add_submenu_page("wc_invoice_menu", __('Blank page/500 error resolver', 'woo-pdf-invoice-builder'), __('Blank page/500 error resolver', 'woo-pdf-invoice-builder'), 'manage_options', __FILE__ . 'errorresolver', array($this, 'ErrorResolver'));
 
-        add_submenu_page("wc_invoice_menu", 'Our WC Plugins', 'Our WC Plugins', 'manage_options', __FILE__ . 'our_plugins', array($this, 'OurWCPlugins'));
+        add_submenu_page("wc_invoice_menu", __('Our WC Plugins', 'woo-pdf-invoice-builder'), __('Our WC Plugins', 'woo-pdf-invoice-builder'), 'manage_options', __FILE__ . 'our_plugins', array($this, 'OurWCPlugins'));
 
         if (RednaoWooCommercePDFInvoice::IsPR()) {
-            add_submenu_page("wc_invoice_menu", 'Custom Fields', 'Custom Fields', 'manage_options', 'invoice-builder-custom-fields', array($this, 'CustomFields'));
-            add_submenu_page("wc_invoice_menu", 'Settings', 'Settings', 'manage_options', __FILE__ . 'settings', array($this, 'Settings'));
+            add_submenu_page("wc_invoice_menu", __('Custom Fields', 'woo-pdf-invoice-builder'), __('Custom Fields', 'woo-pdf-invoice-builder'), 'manage_options', 'invoice-builder-custom-fields', array($this, 'CustomFields'));
+            add_submenu_page("wc_invoice_menu", __('Settings', 'woo-pdf-invoice-builder'), __('Settings', 'woo-pdf-invoice-builder'), 'manage_options', __FILE__ . 'settings', array($this, 'Settings'));
             //  add_submenu_page("wc_invoice_menu", 'PDF Viewer', 'PDF Viewer', 'manage_options', __FILE__ . 'pdfViewer', array($this, 'PDFViewer'));
         }
 

@@ -1,0 +1,150 @@
+/* ============================================
+   Bulk Action Progress Popup
+   ============================================ */
+
+.rn-bulk-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.rn-bulk-overlay.rn-visible {
+    opacity: 1;
+}
+
+.rn-bulk-modal {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    padding: 30px 36px;
+    width: 480px;
+    max-width: 90vw;
+    text-align: center;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.rn-bulk-overlay.rn-visible .rn-bulk-modal {
+    transform: translateY(0);
+}
+
+.rn-bulk-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1d2327;
+    margin: 0 0 6px 0;
+}
+
+.rn-bulk-subtitle {
+    font-size: 13px;
+    color: #646970;
+    margin: 0 0 24px 0;
+}
+
+/* Progress Bar */
+.rn-bulk-progress-wrap {
+    background: #e0e0e0;
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    position: relative;
+}
+
+.rn-bulk-progress-bar {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #7f54b3, #9b6dd7);
+    width: 0%;
+    transition: width 0.4s ease;
+    position: relative;
+}
+
+.rn-bulk-progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        -45deg,
+        rgba(255,255,255,0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255,255,255,0.15) 50%,
+        rgba(255,255,255,0.15) 75%,
+        transparent 75%
+    );
+    background-size: 30px 30px;
+    animation: rn-bulk-stripe 1s linear infinite;
+}
+
+@keyframes rn-bulk-stripe {
+    0% { background-position: 0 0; }
+    100% { background-position: 30px 0; }
+}
+
+/* Counter text */
+.rn-bulk-counter {
+    font-size: 14px;
+    color: #1d2327;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.rn-bulk-status {
+    font-size: 12px;
+    color: #646970;
+    margin-bottom: 20px;
+    min-height: 18px;
+}
+
+/* Buttons */
+.rn-bulk-btn-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.rn-bulk-btn-cancel {
+    background: #d63638;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 22px;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.rn-bulk-btn-cancel:hover {
+    background: #b32d2e;
+}
+
+.rn-bulk-btn-cancel:disabled {
+    background: #a7aaad;
+    cursor: not-allowed;
+}
+
+/* Error state */
+.rn-bulk-error {
+    color: #d63638;
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+}
+
+.rn-bulk-error.rn-visible {
+    display: block;
+}

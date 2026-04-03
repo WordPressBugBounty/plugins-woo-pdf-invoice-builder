@@ -117,7 +117,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
             $order=wc_get_order($orderId);
             if($order==false)
             {
-                echo __("Invalid Order Number","wooinvoicebuilder");
+                echo __("Invalid Order Number","woo-pdf-invoice-builder");
                 die();
             }
 

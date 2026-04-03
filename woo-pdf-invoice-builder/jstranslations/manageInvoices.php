@@ -1,3 +1,26 @@
 <?php return array(
-"Thanks for shopping with us!"=>__("Thanks for shopping with us!","wooinvoicebuilder")
+"View"=>__("View","woo-pdf-invoice-builder"),
+"Full Only"=>__("Full Only","woo-pdf-invoice-builder"),
+"Download"=>__("Download","woo-pdf-invoice-builder"),
+"Print"=>__("Print","woo-pdf-invoice-builder"),
+"Delete"=>__("Delete","woo-pdf-invoice-builder"),
+"Creation Date"=>__("Creation Date","woo-pdf-invoice-builder"),
+"Invoice Number"=>__("Invoice Number","woo-pdf-invoice-builder"),
+"Order"=>__("Order","woo-pdf-invoice-builder"),
+"Customer Name"=>__("Customer Name","woo-pdf-invoice-builder"),
+"Status"=>__("Status","woo-pdf-invoice-builder"),
+"Total"=>__("Total","woo-pdf-invoice-builder"),
+"Actions"=>__("Actions","woo-pdf-invoice-builder"),
+"Nothing to show, please execute a search first!"=>__("Nothing to show, please execute a search first!","woo-pdf-invoice-builder"),
+"No invoice were found, try searching using a different criteria!"=>__("No invoice were found, try searching using a different criteria!","woo-pdf-invoice-builder"),
+"full version only"=>__("full version only","woo-pdf-invoice-builder"),
+"Email"=>__("Email","woo-pdf-invoice-builder"),
+"The pdf(s) were sent to print successfully!"=>__("The pdf(s) were sent to print successfully!","woo-pdf-invoice-builder"),
+"items"=>__("items","woo-pdf-invoice-builder"),
+"Are you sure?"=>__("Are you sure?","woo-pdf-invoice-builder"),
+"PDF Template"=>__("PDF Template","woo-pdf-invoice-builder"),
+"Start Date"=>__("Start Date","woo-pdf-invoice-builder"),
+"End Date"=>__("End Date","woo-pdf-invoice-builder"),
+"Search"=>__("Search","woo-pdf-invoice-builder"),
+"Thanks for shopping with us!"=>__("Thanks for shopping with us!","woo-pdf-invoice-builder")
 );

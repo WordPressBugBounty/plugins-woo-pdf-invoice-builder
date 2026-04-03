@@ -40,7 +40,7 @@ class TemplateImporter
             if($result>0)
             {
                 echo "<div class='alert alert-danger'>
-                    ".__("Sorry this version support only one pdf template, please remove your existing template first  or","wooinvoicebuilder")." <a target='_blank' href='https://wooinvoice.rednao.com/getit/'>".__('click here to get the full version','wooinvoicebuilder')."</a>
+                    ".__("Sorry this version support only one pdf template, please remove your existing template first  or","woo-pdf-invoice-builder")." <a target='_blank' href='https://wooinvoice.rednao.com/getit/'>".__('click here to get the full version','woo-pdf-invoice-builder')."</a>
                 </div>";
                 return null;
             }
@@ -49,7 +49,7 @@ class TemplateImporter
         if(isset($options->NeedsPR)&&$options->NeedsPR&&!\RednaoWooCommercePDFInvoice::IsPR())
         {
             echo "<div class='alert alert-danger'>
-                    ".__("Sorry this template use features of the full version so it can't be installed.","")."<a target='_blank' href='https://wooinvoice.rednao.com/getit/'>".__('click here to get the full version','wooinvoicebuilder')."</a>
+                    ".__("Sorry this template use features of the full version so it can't be installed.","")."<a target='_blank' href='https://wooinvoice.rednao.com/getit/'>".__('click here to get the full version','woo-pdf-invoice-builder')."</a>
                 </div>";
             return null;
         }

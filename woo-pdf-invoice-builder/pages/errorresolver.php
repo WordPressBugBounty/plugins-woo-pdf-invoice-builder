@@ -17,18 +17,18 @@ wp_localize_script('woopdfinvoice-errorresolver','rnErrorResolver',array(
 ));
 ?>
 <div class="bootstrap-wrapper">
-    <h4>When creating an invoice or executing the preview are you getting any of these issues?</h4>
+    <h4><?php echo esc_html__('When creating an invoice or executing the preview are you getting any of these issues?','woo-pdf-invoice-builder');?></h4>
     <ul style="list-style: circle inside;margin-left:10px;">
-        <li>Blank page</li>
-        <li>500 error message</li>
+        <li><?php echo esc_html__('Blank page','woo-pdf-invoice-builder');?></li>
+        <li><?php echo esc_html__('500 error message','woo-pdf-invoice-builder');?></li>
     </ul>
-     <h4>If so this page will try to help you find the problem (and hopefully solve it)</h4>
+     <h4><?php echo esc_html__('If so this page will try to help you find the problem (and hopefully solve it)','woo-pdf-invoice-builder');?></h4>
 
 <hr/>
 
-    <h4 style="margin-top: 50px;">To begin please tell me which template is having the issue and when are you getting this error</h4>
+    <h4 style="margin-top: 50px;"><?php echo esc_html__('To begin please tell me which template is having the issue and when are you getting this error','woo-pdf-invoice-builder');?></h4>
     <div>
-        <label style="font-weight: normal;">Tamplate that is having this problem:</label><select style="width: 200px;display: inline;" id="templateName" class="form-control">
+        <label style="font-weight: normal;"><?php echo esc_html__('Template that is having this problem:','woo-pdf-invoice-builder');?></label><select style="width: 200px;display: inline;" id="templateName" class="form-control">
             <?php
                 foreach($invoices as $invoice)
                 {
@@ -37,44 +37,44 @@ wp_localize_script('woopdfinvoice-errorresolver','rnErrorResolver',array(
             ?>
         </select>
     </div>
-    <input value="preview" name="issueType" class="issueType" type="radio" style="margin:0;outline: none;" id="preview"/><label  for="preview" style="margin:0 0 0 10px;font-weight: normal;"> I get this error in the invoice designer, after clicking 'Preview' </label><br/>
-    <input value="order" name="issueType" class="issueType" type="radio" style="margin:0;outline: none;" id="invoiceCreation"/><label  for="invoiceCreation" style="margin:0 0 0 10px;font-weight: normal;"> I get this error when i try to view or create the invoice of one of my WooCommerce orders </label>
+    <input value="preview" name="issueType" class="issueType" type="radio" style="margin:0;outline: none;" id="preview"/><label  for="preview" style="margin:0 0 0 10px;font-weight: normal;"> <?php echo esc_html__('I get this error in the invoice designer, after clicking Preview','woo-pdf-invoice-builder');?> </label><br/>
+    <input value="order" name="issueType" class="issueType" type="radio" style="margin:0;outline: none;" id="invoiceCreation"/><label  for="invoiceCreation" style="margin:0 0 0 10px;font-weight: normal;"> <?php echo esc_html__('I get this error when i try to view or create the invoice of one of my WooCommerce orders','woo-pdf-invoice-builder');?> </label>
     <div style="margin-left: 10px;display: none;" id="orderDetail">
-        <label>Which order number are you using?</label><input id="orderNumber" style="width: 100px;display: inline;margin-left: 4px;" class="form-control" type="text">
+        <label><?php echo esc_html__('Which order number are you using?','woo-pdf-invoice-builder');?></label><input id="orderNumber" style="width: 100px;display: inline;margin-left: 4px;" class="form-control" type="text">
     </div>
     <div style="display: block;margin-top:10px;">
-        <button data-style="expand-right"  id="analyze" style="display: none;" class="btn btn-success">Thanks, now please click this button to start analyzing the problem</button>
+        <button data-style="expand-right"  id="analyze" style="display: none;" class="btn btn-success"><?php echo esc_html__('Thanks, now please click this button to start analyzing the problem','woo-pdf-invoice-builder');?></button>
     </div>
 
     <div id="ErrorDetail" style="display: none;">
-        <h3>Ohhhh i found something, the invoice generation seems to be failing due this problem:</h3>
+        <h3><?php echo esc_html__('Ohhhh i found something, the invoice generation seems to be failing due this problem:','woo-pdf-invoice-builder');?></h3>
         <table class="table table table-striped">
             <tr>
-                <th>Error Message</th>
+                <th><?php echo esc_html__('Error Message','woo-pdf-invoice-builder');?></th>
                 <td id="edErrorMessage"></td>
             </tr>
             <tr>
-                <th>Error Number</th>
+                <th><?php echo esc_html__('Error Number','woo-pdf-invoice-builder');?></th>
                 <td id="edErrorNumber"></td>
             </tr>
             <tr>
-                <th>Error File</th>
+                <th><?php echo esc_html__('Error File','woo-pdf-invoice-builder');?></th>
                 <td id="edErrorFile"></td>
             </tr>
             <tr>
-                <th>Error Line</th>
+                <th><?php echo esc_html__('Error Line','woo-pdf-invoice-builder');?></th>
                 <td id="edErrorLine"></td>
             </tr>
             <tr>
-                <th>Error Context</th>
+                <th><?php echo esc_html__('Error Context','woo-pdf-invoice-builder');?></th>
                 <td id="edErrorContext"></td>
             </tr>
             <tr>
-                <th>Error Detail</th>
+                <th><?php echo esc_html__('Error Detail','woo-pdf-invoice-builder');?></th>
                 <td id="edErrorDetail"></td>
             </tr>
 
         </table>
-        <h3>If by seeing this error you know how to fix it GREAT!, if not please contact support including this information in your ticket =)</h3>
+        <h3><?php echo esc_html__('If by seeing this error you know how to fix it GREAT!, if not please contact support including this information in your ticket =)','woo-pdf-invoice-builder');?></h3>
     </div>
 </div>
