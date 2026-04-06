@@ -158,7 +158,7 @@ if(!is_writable(RednaoWooCommercePDFInvoice::GetSubFolderPath('attachments')))
 global $wpdb;
 if(isset($_GET['id']))
 {
-    $invoiceData = $wpdb->get_results($wpdb->prepare("SELECT invoice_id,attach_to,name,options,type,html,extensions,conditions,pages,my_account_download,create_when,order_actions FROM ".RednaoWooCommercePDFInvoice::$INVOICE_TABLE." WHERE invoice_id=%s",$_GET['id']));
+    $invoiceData = $wpdb->get_results($wpdb->prepare("SELECT invoice_id,attach_to,name,options,type,html,extensions,conditions,pages,my_account_download,my_account_download_text,create_when,order_actions FROM ".RednaoWooCommercePDFInvoice::$INVOICE_TABLE." WHERE invoice_id=%s",$_GET['id']));
 }else{
     $invoiceData=array();
 }
@@ -190,6 +190,7 @@ if(count($invoiceData)>0)
     $pageOptions->pages=$data->pages;
     $pageOptions->pageId=$data->invoice_id;
     $pageOptions->myAccountDownload=$data->my_account_download=="1";
+    $pageOptions->myAccountDownloadText=isset($data->my_account_download_text)?$data->my_account_download_text:'';
     $pageOptions->attachTo=json_decode($data->attach_to);
     $pageOptions->name=$data->name;
     $pageOptions->pageType=$data->type;

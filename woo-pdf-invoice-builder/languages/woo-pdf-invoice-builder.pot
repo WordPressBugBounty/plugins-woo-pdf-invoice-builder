@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce PDF Invoice Builder 1.2.162\n"
+"Project-Id-Version: WooCommerce PDF Invoice Builder 1.2.164\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/woo-pdf-invoice-builder\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-04-01T14:29:44+00:00\n"
+"POT-Creation-Date: 2026-04-06T15:19:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: woo-pdf-invoice-builder\n"
@@ -34,24 +34,110 @@ msgstr ""
 msgid "http://rednao.com"
 msgstr ""
 
-#: bulk_actions/RNBulkActionManager.php:47
+#: bulk_actions/RNBulkActionManager.php:68
 #: jstranslations/pageBuilderReact.php:264
 msgid "Select a pdf template"
 msgstr ""
 
-#: bulk_actions/RNBulkActionManager.php:109
-msgid "Invoices printed successfully"
+#: bulk_actions/RNBulkActionManager.php:71
+msgid "Processing PDF invoices..."
 msgstr ""
 
-#: bulk_actions/RNBulkActionManager.php:197
+#: bulk_actions/RNBulkActionManager.php:72
+msgid "Preparing..."
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:73
+#: jstranslations/pageBuilderReact.php:305
+msgid "Cancel"
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:74
+msgid "Cancelling..."
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:75
+#: jstranslations/pageBuilderReact.php:266
+msgid "Close"
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:76
+msgid "Finalizing..."
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:77
+msgid "Creating ZIP file..."
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:78
+msgid "Merging PDFs..."
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:79
+msgid "Processing {current} of {total}"
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:80
+msgid "Generating PDF for order #{orderId}..."
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:81
+msgid "Please select at least one order."
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:82
+msgid "Server error. Please try again."
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:83
+msgid "Error processing order #{orderId}: {message}"
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:84
+msgid "Invoices sent to printer successfully!"
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:85
+msgid "Could not send invoices to printer. Please check your printer configuration."
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:86
+msgid "Bulk View Invoices"
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:87
+msgid "Bulk Print Invoices"
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:88
+msgid "Bulk Download Invoices"
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:89
+msgid "Sorry, this feature is only available in the full version."
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:116
+msgid "Bulk view invoices"
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:117
+msgid "Bulk print invoices"
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:118
+msgid "Bulk download invoices"
+msgstr ""
+
+#: bulk_actions/RNBulkActionManager.php:120
 msgid "Bulk view invoices (full version only)"
 msgstr ""
 
-#: bulk_actions/RNBulkActionManager.php:198
+#: bulk_actions/RNBulkActionManager.php:121
 msgid "Bulk print invoices (full version only)"
 msgstr ""
 
-#: bulk_actions/RNBulkActionManager.php:199
+#: bulk_actions/RNBulkActionManager.php:122
 msgid "Bulk download invoices (full version only)"
 msgstr ""
 
@@ -69,108 +155,111 @@ msgid "click here to get the full version"
 msgstr ""
 
 #: jstranslations/manageInvoices.php:2
-#: woocommerce-pdf-invoice.php:480
-msgid "View"
+msgid "PDF Template"
 msgstr ""
 
 #: jstranslations/manageInvoices.php:3
-msgid "Full Only"
+msgid "Start Date"
 msgstr ""
 
 #: jstranslations/manageInvoices.php:4
-#: pr/WCCustomizedPages/MyOrders/MyOrdersCustomizer.php:46
-#: pr/WCCustomizedPages/MyOrders/MyOrdersCustomizer.php:49
-#: woocommerce-pdf-invoice.php:477
-msgid "Download"
+msgid "End Date"
 msgstr ""
 
 #: jstranslations/manageInvoices.php:5
-msgid "Print"
+#: jstranslations/pageBuilderReact.php:240
+msgid "Customer Name"
 msgstr ""
 
 #: jstranslations/manageInvoices.php:6
+#: jstranslations/pageBuilderReact.php:199
+msgid "Invoice Number"
+msgstr ""
+
+#: jstranslations/manageInvoices.php:7
+msgid "Search"
+msgstr ""
+
+#: jstranslations/manageInvoices.php:8
+#: jstranslations/pageBuilderReact.php:310
+#: woocommerce-pdf-invoice.php:483
+msgid "View"
+msgstr ""
+
+#: jstranslations/manageInvoices.php:9
+msgid "Full Only"
+msgstr ""
+
+#: jstranslations/manageInvoices.php:10
+#: jstranslations/pageBuilderReact.php:309
+#: pr/WCCustomizedPages/MyOrders/MyOrdersCustomizer.php:63
+#: pr/WCCustomizedPages/MyOrders/MyOrdersCustomizer.php:66
+#: woocommerce-pdf-invoice.php:480
+msgid "Download"
+msgstr ""
+
+#: jstranslations/manageInvoices.php:11
+msgid "Print"
+msgstr ""
+
+#: jstranslations/manageInvoices.php:12
 #: jstranslations/metabox.php:7
 #: pages/custom_field_list.php:128
 #: pages/invoice_list.php:207
 msgid "Delete"
 msgstr ""
 
-#: jstranslations/manageInvoices.php:7
+#: jstranslations/manageInvoices.php:13
 msgid "Creation Date"
 msgstr ""
 
-#: jstranslations/manageInvoices.php:8
-#: jstranslations/pageBuilderReact.php:194
-msgid "Invoice Number"
-msgstr ""
-
-#: jstranslations/manageInvoices.php:9
+#: jstranslations/manageInvoices.php:14
 msgid "Order"
 msgstr ""
 
-#: jstranslations/manageInvoices.php:10
-#: jstranslations/pageBuilderReact.php:235
-msgid "Customer Name"
-msgstr ""
-
-#: jstranslations/manageInvoices.php:11
-#: jstranslations/pageBuilderReact.php:196
+#: jstranslations/manageInvoices.php:15
+#: jstranslations/pageBuilderReact.php:201
 msgid "Status"
 msgstr ""
 
-#: jstranslations/manageInvoices.php:12
+#: jstranslations/manageInvoices.php:16
 #: jstranslations/pageBuilderReact.php:98
 msgid "Total"
 msgstr ""
 
-#: jstranslations/manageInvoices.php:13
+#: jstranslations/manageInvoices.php:17
+#: jstranslations/pageBuilderReact.php:284
 msgid "Actions"
 msgstr ""
 
-#: jstranslations/manageInvoices.php:14
+#: jstranslations/manageInvoices.php:18
 msgid "Nothing to show, please execute a search first!"
 msgstr ""
 
-#: jstranslations/manageInvoices.php:15
+#: jstranslations/manageInvoices.php:19
 msgid "No invoice were found, try searching using a different criteria!"
 msgstr ""
 
-#: jstranslations/manageInvoices.php:16
+#: jstranslations/manageInvoices.php:20
 #: jstranslations/pageBuilderReact.php:71
 msgid "full version only"
 msgstr ""
 
-#: jstranslations/manageInvoices.php:17
+#: jstranslations/manageInvoices.php:21
 #: jstranslations/metabox.php:6
 msgid "Email"
 msgstr ""
 
-#: jstranslations/manageInvoices.php:18
+#: jstranslations/manageInvoices.php:22
 msgid "The pdf(s) were sent to print successfully!"
 msgstr ""
 
-#: jstranslations/manageInvoices.php:19
+#: jstranslations/manageInvoices.php:23
 msgid "items"
 msgstr ""
 
-#: jstranslations/manageInvoices.php:20
-msgid "Are you sure?"
-msgstr ""
-
-#: jstranslations/manageInvoices.php:21
-msgid "PDF Template"
-msgstr ""
-
-#: jstranslations/manageInvoices.php:22
-msgid "Start Date"
-msgstr ""
-
-#: jstranslations/manageInvoices.php:23
-msgid "End Date"
-msgstr ""
-
 #: jstranslations/manageInvoices.php:24
-msgid "Search"
+msgid "Are you sure?"
 msgstr ""
 
 #: jstranslations/manageInvoices.php:25
@@ -187,7 +276,7 @@ msgid "Create PDF"
 msgstr ""
 
 #: jstranslations/metabox.php:4
-#: woocommerce-pdf-invoice.php:470
+#: woocommerce-pdf-invoice.php:473
 msgid "View PDF"
 msgstr ""
 
@@ -220,6 +309,7 @@ msgid "Edit invoice number"
 msgstr ""
 
 #: jstranslations/metabox.php:14
+#: jstranslations/pageBuilderReact.php:334
 msgid "Sorry this feature is only available in the full version"
 msgstr ""
 
@@ -377,107 +467,107 @@ msgid "Sorry this template is only available in the full version"
 msgstr ""
 
 #: jstranslations/pageBuilderReact.php:40
-msgid "Custom Url"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:41
-msgid "Link Type"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:42
-msgid "Payment Page"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:43
-msgid "Link Text"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:44
-msgid "Custom text/url"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:45
-msgid "QrCode Type"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:46
-msgid "Link to Payment Page"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:47
-msgid "Size"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:48
-msgid "Small"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:49
-msgid "Normal"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:50
-msgid "Big"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:51
-msgid "Very Big"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:52
-msgid "Foreground Color"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:53
-msgid "Background Color"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:54
 msgid "Orientation"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:55
+#: jstranslations/pageBuilderReact.php:41
 msgid "Vertical"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:56
+#: jstranslations/pageBuilderReact.php:42
 msgid "Horizontal"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:57
+#: jstranslations/pageBuilderReact.php:43
 msgid "Style"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:58
+#: jstranslations/pageBuilderReact.php:44
 msgid "Solid"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:59
+#: jstranslations/pageBuilderReact.php:45
 msgid "Dotted"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:60
+#: jstranslations/pageBuilderReact.php:46
 msgid "Dashed"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:61
+#: jstranslations/pageBuilderReact.php:47
 msgid "Double"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:62
+#: jstranslations/pageBuilderReact.php:48
 msgid "Groove"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:63
+#: jstranslations/pageBuilderReact.php:49
 msgid "Ridge"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:64
+#: jstranslations/pageBuilderReact.php:50
 msgid "Inset"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:65
+#: jstranslations/pageBuilderReact.php:51
 msgid "Outset"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:52
+msgid "Size"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:53
+msgid "Custom Url"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:54
+msgid "Link Type"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:55
+msgid "Payment Page"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:56
+msgid "Link Text"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:57
+msgid "Custom text/url"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:58
+msgid "QrCode Type"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:59
+msgid "Link to Payment Page"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:60
+msgid "Small"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:61
+msgid "Normal"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:62
+msgid "Big"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:63
+msgid "Very Big"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:64
+msgid "Foreground Color"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:65
+msgid "Background Color"
 msgstr ""
 
 #: jstranslations/pageBuilderReact.php:66
@@ -501,51 +591,51 @@ msgid "Color"
 msgstr ""
 
 #: jstranslations/pageBuilderReact.php:72
-msgid "Select a custom field"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:73
-msgid "Label Position"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:74
-msgid "Top"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:75
-msgid "Left"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:76
-msgid "Right"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:77
-msgid "Expandable"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:78
-msgid "Expandable fields will push the fields bellow them if they need more space (similar to how the invoice detail table works)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:79
-msgid "Custom Field"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:80
-msgid "Custom Field List"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:81
 msgid "Text"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:82
+#: jstranslations/pageBuilderReact.php:73
 msgid "Font Family"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:83
+#: jstranslations/pageBuilderReact.php:74
 msgid "Line Height"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:75
+msgid "Select a custom field"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:76
+msgid "Label Position"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:77
+msgid "Top"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:78
+msgid "Left"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:79
+msgid "Right"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:80
+msgid "Expandable"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:81
+msgid "Expandable fields will push the fields bellow them if they need more space (similar to how the invoice detail table works)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:82
+msgid "Custom Field"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:83
+msgid "Custom Field List"
 msgstr ""
 
 #: jstranslations/pageBuilderReact.php:84
@@ -873,319 +963,319 @@ msgid "QR Code"
 msgstr ""
 
 #: jstranslations/pageBuilderReact.php:166
-msgid "Align"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:167
-msgid "Padding"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:168
-msgid "Width"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:169
-msgid "Height"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:170
-msgid "Dimensions"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:171
-msgid "Link"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:172
-msgid "Note type"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:173
-msgid "All"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:174
-msgid "Customer"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:175
-msgid "Private"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:176
 msgid "Invoice Detail"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:177
-msgid "Select an icon"
+#: jstranslations/pageBuilderReact.php:167
+msgid "Link"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:178
-msgid "Search Icon"
+#: jstranslations/pageBuilderReact.php:168
+msgid "Align"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:179
-msgid "Columns"
+#: jstranslations/pageBuilderReact.php:169
+msgid "Padding"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:180
-msgid "Header"
+#: jstranslations/pageBuilderReact.php:170
+msgid "Width"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:181
-msgid "Add New Column"
+#: jstranslations/pageBuilderReact.php:171
+msgid "Height"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:182
-msgid "Add Column"
+#: jstranslations/pageBuilderReact.php:172
+msgid "Dimensions"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:183
-msgid "Which field do you want to add to your table?"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:184
-msgid "All the columns were already added to the table =)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:185
-msgid "Include Product Meta (Full Version Only)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:186
-msgid "Thumbnail"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:187
-msgid "Max Width"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:188
-msgid "Max Height"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:189
-msgid "Show amounts in negative"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:190
-msgid "Store"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:191
-msgid "Store Address"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:192
-msgid "Invoice Details"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:193
-msgid "Invoice Date"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:195
-msgid "Order Details"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:197
-msgid "Due Date"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:198
-msgid "Order Date"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:199
-msgid "Customer Notes"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:200
-msgid "Payment Method"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:201
-msgid "Shipping Method"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:202
-msgid "Coupon Code"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:203
-msgid "Order Weight"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:204
-msgid "Order Notes"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:205
-msgid "Grand Total"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:206
-msgid "Tax Total"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:207
-msgid "Shipping Total"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:208
-msgid "Discount Total"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:209
-msgid "Fee Total"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:210
-msgid "Subtotal"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:211
-msgid "Billing Information"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:212
-msgid "All (Billing)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:213
-msgid "Address (Billing)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:214
-msgid "Company Name (Billing)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:215
-msgid "Country (Billing)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:216
-msgid "Customer Name (Billing)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:217
-msgid "Email (Billing)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:218
-msgid "Phone (Billing)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:219
-msgid "State (Billing)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:220
-msgid "City (Billing)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:221
-msgid "Zip (Billing)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:222
-msgid "Shipping Information"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:223
-msgid "All (Shipping)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:224
-msgid "Address (Shipping)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:225
-msgid "Company Name (Shipping)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:226
-msgid "Country (Shipping)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:227
-msgid "Customer Name (Shipping)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:228
-msgid "Email (Shipping)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:229
-msgid "Phone (Shipping)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:230
-msgid "City (Shipping)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:231
-msgid "State (Shipping)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:232
-msgid "Zip (Shipping)"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:233
-msgid "Customer Information"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:234
-msgid "Customer Id"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:236
-msgid "Customer Email"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:237
-msgid "Customer Username"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:238
-msgid "Customer Creation Date"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:239
-msgid "Skip if empty"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:240
-msgid "Label Styles"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:241
-msgid "Value Styles"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:242
-msgid "Box Styles"
-msgstr ""
-
-#: jstranslations/pageBuilderReact.php:243
+#: jstranslations/pageBuilderReact.php:173
 msgid "Due Date Configuration"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:244
+#: jstranslations/pageBuilderReact.php:174
+msgid "Note type"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:175
+msgid "All"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:176
+msgid "Customer"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:177
+msgid "Private"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:178
 msgid "Format Type"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:245
+#: jstranslations/pageBuilderReact.php:179
 msgid "Standard"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:246
+#: jstranslations/pageBuilderReact.php:180
 msgid "Custom (Full Version Only)"
 msgstr ""
 
-#: jstranslations/pageBuilderReact.php:247
+#: jstranslations/pageBuilderReact.php:181
 msgid "Address Format"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:182
+msgid "Select an icon"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:183
+msgid "Search Icon"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:184
+msgid "Columns"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:185
+msgid "Header"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:186
+msgid "Add New Column"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:187
+msgid "Add Column"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:188
+msgid "Which field do you want to add to your table?"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:189
+msgid "All the columns were already added to the table =)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:190
+msgid "Include Product Meta (Full Version Only)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:191
+msgid "Thumbnail"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:192
+msgid "Max Width"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:193
+msgid "Max Height"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:194
+msgid "Show amounts in negative"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:195
+msgid "Store"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:196
+msgid "Store Address"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:197
+msgid "Invoice Details"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:198
+msgid "Invoice Date"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:200
+msgid "Order Details"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:202
+msgid "Due Date"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:203
+msgid "Order Date"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:204
+msgid "Customer Notes"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:205
+msgid "Payment Method"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:206
+msgid "Shipping Method"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:207
+msgid "Coupon Code"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:208
+msgid "Order Weight"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:209
+msgid "Order Notes"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:210
+msgid "Grand Total"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:211
+msgid "Tax Total"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:212
+msgid "Shipping Total"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:213
+msgid "Discount Total"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:214
+msgid "Fee Total"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:215
+msgid "Subtotal"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:216
+msgid "Billing Information"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:217
+msgid "All (Billing)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:218
+msgid "Address (Billing)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:219
+msgid "Company Name (Billing)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:220
+msgid "Country (Billing)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:221
+msgid "Customer Name (Billing)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:222
+msgid "Email (Billing)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:223
+msgid "Phone (Billing)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:224
+msgid "State (Billing)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:225
+msgid "City (Billing)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:226
+msgid "Zip (Billing)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:227
+msgid "Shipping Information"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:228
+msgid "All (Shipping)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:229
+msgid "Address (Shipping)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:230
+msgid "Company Name (Shipping)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:231
+msgid "Country (Shipping)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:232
+msgid "Customer Name (Shipping)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:233
+msgid "Email (Shipping)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:234
+msgid "Phone (Shipping)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:235
+msgid "City (Shipping)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:236
+msgid "State (Shipping)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:237
+msgid "Zip (Shipping)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:238
+msgid "Customer Information"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:239
+msgid "Customer Id"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:241
+msgid "Customer Email"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:242
+msgid "Customer Username"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:243
+msgid "Customer Creation Date"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:244
+msgid "Skip if empty"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:245
+msgid "Label Styles"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:246
+msgid "Value Styles"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:247
+msgid "Box Styles"
 msgstr ""
 
 #: jstranslations/pageBuilderReact.php:248
@@ -1254,6 +1344,307 @@ msgstr ""
 
 #: jstranslations/pageBuilderReact.php:265
 msgid "Loading Template"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:267
+msgid "General"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:268
+#: pages/invoice_list.php:144
+msgid "Template Name"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:269
+msgid "Create the pdf when the order is"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:270
+msgid "Do NOT generate the pdf automatically. I will generate it manually"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:271
+msgid "Attach the pdf to the following WooCommerce emails(if you don't want to add the pdf to any woocommerce email leave this box empty)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:272
+msgid "Page Size"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:273
+msgid "Portrait"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:274
+msgid "Landscape"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:275
+msgid "Enable multi page designer"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:276
+msgid "Allow download in 'My account' page"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:277
+msgid "Download Button Text"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:278
+msgid "Create a new page for each order line"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:279
+msgid "Add pdf link in order meta"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:280
+msgid "Meta Name"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:281
+msgid "Appearance (Full only)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:282
+msgid "Invoice Number Format"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:283
+msgid "Password Protect"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:285
+msgid "Hide page condition"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:286
+msgid "Custom size is only available in the full version"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:287
+msgid "Page Width (in Inches, minimum 2.4)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:288
+msgid "Page Height (in Inches, minimum 2.4)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:289
+msgid "Password protect can add a password to the pdfs that are emailed by the plugin (either the pdfs that are send to the customer or all of them). Pdfs that are opened in the admin area (like in the orders page) are created without a password."
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:290
+msgid "Password protect this pdf (Full Version Only)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:291
+msgid "Sorry password protection is only available in the full version"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:292
+msgid "Password"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:293
+msgid "Protection Type"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:294
+msgid "Protect all the pdfs emailed"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:295
+msgid "Protect only the pdfs emailed to the customer"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:296
+msgid "Test Password"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:297
+msgid "Test password"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:298
+msgid "The password for this order would be"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:299
+msgid "Please define an order number to check it's password"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:300
+msgid "Password can not be empty"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:301
+msgid "Type"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:302
+msgid "Sequence"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:303
+msgid "Next Number"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:304
+msgid "Apply"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:306
+msgid "Change"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:307
+msgid "Please save your template before assigning a sequence number."
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:308
+msgid "Invalid number"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:311
+msgid "What is this?"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:312
+msgid "Default Font Family"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:313
+msgid "Add Font"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:314
+msgid "Background Image"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:315
+msgid "Click here to select an image"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:316
+msgid "Background Position"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:317
+msgid "Fill"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:318
+msgid "Repeat"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:319
+msgid "Bottom"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:320
+msgid "Center"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:321
+msgid "Remove Image"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:322
+msgid "Header and Footer"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:323
+msgid "Hide header"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:324
+msgid "Hide footer"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:325
+msgid "Show repeatable header"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:326
+msgid "Show repeatable footer"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:327
+msgid "Advanced Font Options"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:328
+msgid "Disable font subsetting (use this option if you are using a custom font and it is displaying weird characters)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:329
+msgid "Generate pdf using rtl text direction"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:330
+msgid "Force OTL (use this if some characters of your form are out of place, this could happen for example on indic fonts)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:331
+msgid "Which image do you want to use in your pdf?"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:332
+msgid "Select an image"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:333
+msgid "Sorry these options are only available in the full version"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:335
+msgid "Currently you don't have any hide page condition configured which means all the pages will always be included"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:336
+msgid "Click here to add a new page condition"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:337
+msgid "Add another hide condition"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:338
+msgid "Icon to use"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:339
+msgid "Which image do you want to use as an icon?"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:340
+msgid "Add a download button to the order list for this template"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:341
+msgid "Add a view button to the order list for this template"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:342
+msgid "Pages to hide (separated  by comma)"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:343
+msgid "The pages will be hidden when:"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:344
+msgid "Operation"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:345
+msgid "Value"
+msgstr ""
+
+#: jstranslations/pageBuilderReact.php:346
+msgid "Join"
 msgstr ""
 
 #: jstranslations/settings.php:3
@@ -1473,10 +1864,6 @@ msgstr ""
 msgid "Import"
 msgstr ""
 
-#: pages/invoice_list.php:144
-msgid "Template Name"
-msgstr ""
-
 #: pages/invoice_list.php:207
 msgid "Are you sure you want to delete the form?"
 msgstr ""
@@ -1509,38 +1896,38 @@ msgstr ""
 msgid "Invalid Order Number"
 msgstr ""
 
-#: woocommerce-pdf-invoice.php:570
+#: woocommerce-pdf-invoice.php:574
 msgid "PDF Invoice"
 msgstr ""
 
-#: woocommerce-pdf-invoice.php:585
+#: woocommerce-pdf-invoice.php:589
 msgid "WC Invoice"
 msgstr ""
 
-#: woocommerce-pdf-invoice.php:586
+#: woocommerce-pdf-invoice.php:590
 msgid "Manage Invoices"
 msgstr ""
 
-#: woocommerce-pdf-invoice.php:588
+#: woocommerce-pdf-invoice.php:592
 msgid "Documentation/Support"
 msgstr ""
 
-#: woocommerce-pdf-invoice.php:588
+#: woocommerce-pdf-invoice.php:592
 msgid "Documentation/Help"
 msgstr ""
 
-#: woocommerce-pdf-invoice.php:589
+#: woocommerce-pdf-invoice.php:593
 msgid "Blank page/500 error resolver"
 msgstr ""
 
-#: woocommerce-pdf-invoice.php:591
+#: woocommerce-pdf-invoice.php:595
 msgid "Our WC Plugins"
 msgstr ""
 
-#: woocommerce-pdf-invoice.php:594
+#: woocommerce-pdf-invoice.php:598
 msgid "Custom Fields"
 msgstr ""
 
-#: woocommerce-pdf-invoice.php:595
+#: woocommerce-pdf-invoice.php:599
 msgid "Settings"
 msgstr ""

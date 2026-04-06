@@ -895,6 +895,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
         $createWhen=$this->GetStringValue('createWhen',false);
         $originalExtensions=$this->GetJsonValue('extensions');
         $myAccountDownload=$this->GetBoolValue('myAccountDownload',true);
+        $myAccountDownloadText=$this->GetStringValue('myAccountDownloadText',false);
 
         $nonce=$this->GetStringValue('nonce',true);
 
@@ -927,7 +928,8 @@ final class RednaoWooCommercePDFInvoiceAjax{
                 'order_actions'=>$orderActions,
                 'pages'=>$pages,
                 'html'=>$html,
-                'my_account_download'=>$myAccountDownload
+                'my_account_download'=>$myAccountDownload,
+                'my_account_download_text'=>$myAccountDownloadText
             ));
             $rowId=$wpdb->insert_id;
         }else{
@@ -943,6 +945,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
                 'create_when'=>$createWhen,
                 'conditions'=>$conditionOptions,
                 'my_account_download'=>$myAccountDownload,
+                'my_account_download_text'=>$myAccountDownloadText,
                 'html'=>$html
             ),array('invoice_id'=>$pageId));
             $rowId=$pageId;

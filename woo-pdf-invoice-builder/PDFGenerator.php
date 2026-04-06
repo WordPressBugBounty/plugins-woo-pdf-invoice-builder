@@ -325,27 +325,8 @@ class RednaoPDFGenerator
 
     }
 
-    public function Generate($getFromDatabase=false,$skipDomPDFRenderer=false,$readOnly=false,$dbResultToUse=null)
-    {
-        ini_set('display_errors', 0);
-        require RednaoWooCommercePDFInvoice::$DIR.'/vendor/autoload.php';
-        $this->dompdf = new Dompdf();
-        $this->dompdf->set_option('enable_remote', TRUE);
-
-        $enableFontSubsetting=true;
-        if(isset($this->options->containerOptions->disableFontSubsetting)&&$this->options->containerOptions->disableFontSubsetting===true)
-        {
-            $enableFontSubsetting=false;
-        }
-        $this->dompdf->getOptions()->setTempDir(RednaoWooCommercePDFInvoice::$DIR.'vendor/dompdf/dompdf/temp')->setIsFontSubsettingEnabled($enableFontSubsetting);
-        $this->dompdf->set_option( 'dpi' , '96');
-
-       /* echo $html;
-        echo "------------------------------------------------";
-        echo json_encode($this->GetFieldDictionary());
-        return;*/
+    public function LoadMeta($getFromDatabase=false,$readOnly=false,$dbResultToUse=null,&$alreadyRecorded=false){
         global $wpdb;
-        $alreadyRecorded=false;
         if($getFromDatabase)
         {
             $result=null;
@@ -385,6 +366,30 @@ class RednaoPDFGenerator
             $this->formattedInvoiceNumber=apply_filters('rnwcinv_get_formatted_invoice_number',$data->FormattedInvoiceNumber);
         }
 
+        return true;
+    }
+
+    public function Generate($getFromDatabase=false,$skipDomPDFRenderer=false,$readOnly=false,$dbResultToUse=null)
+    {
+        ini_set('display_errors', 0);
+        require RednaoWooCommercePDFInvoice::$DIR.'/vendor/autoload.php';
+        $this->dompdf = new Dompdf();
+        $this->dompdf->set_option('enable_remote', TRUE);
+
+        $enableFontSubsetting=true;
+        if(isset($this->options->containerOptions->disableFontSubsetting)&&$this->options->containerOptions->disableFontSubsetting===true)
+        {
+            $enableFontSubsetting=false;
+        }
+        $this->dompdf->getOptions()->setTempDir(RednaoWooCommercePDFInvoice::$DIR.'vendor/dompdf/dompdf/temp')->setIsFontSubsettingEnabled($enableFontSubsetting);
+        $this->dompdf->set_option( 'dpi' , '96');
+
+        $alreadyRecorded=false;
+        $loadResult=$this->LoadMeta($getFromDatabase,$readOnly,$dbResultToUse,$alreadyRecorded);
+        if($loadResult==false&&$readOnly)
+            return false;
+        
+
 /*
         if(!$getFromDatabase||!$alreadyRecorded)
         {
@@ -394,7 +399,7 @@ class RednaoPDFGenerator
 
         $this->fieldDictionary  = $this->htmlGenerator->GetFieldsDictionary();
         $this->html = $this->htmlGenerator->Generate();
-
+        global $wpdb;
         if ($getFromDatabase && !$alreadyRecorded)
         {
 

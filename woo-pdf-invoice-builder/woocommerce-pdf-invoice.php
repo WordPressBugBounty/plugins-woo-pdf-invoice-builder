@@ -5,7 +5,7 @@
  * Description: Attach a PDF Invoice to your woocommerce...
  * Author: RedNao
  * Author URI: http://rednao.com
- * Version: 1.2.163
+ * Version: 1.2.164
  * Text Domain: woo-pdf-invoice-builder
  * Domain Path: /languages/
  * License: GPLv3
@@ -31,7 +31,7 @@ final class RednaoWooCommercePDFInvoice
     public static $NAME;
     public static $DIR;
     public static $URL;
-    public static $DBVERSION = 60;
+    public static $DBVERSION = 61;
     public static $HOOK_PREFIX;
     public static $FILE_VERSION = 41;
     public static $BASE_NAME;
@@ -278,7 +278,7 @@ final class RednaoWooCommercePDFInvoice
     {
         global $wpdb;
 
-        $results = $wpdb->get_results($wpdb->prepare("select template.invoice_id from " . RednaoWooCommercePDFInvoice::$INVOICE_TABLE . " template 
+        $results = $wpdb->get_results($wpdb->prepare("select template.invoice_id, template.my_account_download, template.my_account_download_text from " . RednaoWooCommercePDFInvoice::$INVOICE_TABLE . " template 
                                                                 left join " . RednaoWooCommercePDFInvoice::$INVOICES_CREATED_TABLE . " created
                                                                  on created.invoice_id=template.invoice_id and order_id=%s where create_when=%s and created.invoice_id is null", $orderId, $toStatus));
 
@@ -514,7 +514,8 @@ final class RednaoWooCommercePDFInvoice
                 conditions MEDIUMTEXT,
                 order_actions MEDIUMTEXT,
                 type INT,
-                my_account_download TINYINT,            
+                my_account_download TINYINT,
+                my_account_download_text VARCHAR(500),
                 extensions MEDIUMTEXT,    
                 pages MEDIUMTEXT,
                 email_config MEDIUMTEXT,
