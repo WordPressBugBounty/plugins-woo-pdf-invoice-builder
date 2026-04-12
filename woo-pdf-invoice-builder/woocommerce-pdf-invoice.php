@@ -5,7 +5,7 @@
  * Description: Attach a PDF Invoice to your woocommerce...
  * Author: RedNao
  * Author URI: http://rednao.com
- * Version: 1.2.164
+ * Version: 2.0.0
  * Text Domain: woo-pdf-invoice-builder
  * Domain Path: /languages/
  * License: GPLv3
@@ -756,4 +756,80 @@ if (!function_exists('WPDFIB')) {
     {
         return new \rnwcinv\api\PDFApi();
     }
+}
+
+/**
+ * Gets AI model names and labels for the frontend model selector.
+ * Follows the same pattern as SettingsRepository::GetModelNames() in easy-calculation-forms-lit.
+ */
+function rnwcinv_get_ai_model_names() {
+    $models = get_option('rnwcinv_ai_models', []);
+    $names = [];
+
+    $labelMap = [
+        'gemini25pro' => 'Gemini 2.5 Pro',
+        'gemini3pro'  => 'Gemini 3 Pro',
+        'deepseek'    => 'DeepSeek',
+    ];
+
+    // Define display order
+    $order = ['gemini25pro' => 0, 'gemini3pro' => 1, 'deepseek' => 2];
+
+    foreach ($models as $model) {
+        $modelName = is_object($model) ? $model->Name : (isset($model['Name']) ? $model['Name'] : '');
+        if (empty($modelName)) continue;
+
+        $label = isset($labelMap[$modelName]) ? $labelMap[$modelName] : $modelName;
+        $names[] = [
+            'Name'  => $modelName,
+            'Label' => $label
+        ];
+    }
+
+    // Sort by defined order
+    usort($names, function($a, $b) use ($order) {
+        $orderA = isset($order[$a['Name']]) ? $order[$a['Name']] : 999;
+        $orderB = isset($order[$b['Name']]) ? $order[$b['Name']] : 999;
+        return $orderA - $orderB;
+    });
+
+    return $names;
+}
+
+/**
+ * Gets the default AI model name.
+ */
+function rnwcinv_get_ai_default_model() {
+    $models = get_option('rnwcinv_ai_models', []);
+
+    foreach ($models as $model) {
+        $isDefault = is_object($model) ? (isset($model->Default) && $model->Default) : (isset($model['Default']) && $model['Default']);
+        if ($isDefault) {
+            return is_object($model) ? $model->Name : $model['Name'];
+        }
+    }
+
+    // Fallback to first model
+    if (count($models) > 0) {
+        $first = $models[0];
+        return is_object($first) ? $first->Name : (isset($first['Name']) ? $first['Name'] : '');
+    }
+
+    return '';
+}
+
+/**
+ * Gets the API key for a specific AI model.
+ */
+function rnwcinv_get_ai_api_key($modelName) {
+    $models = get_option('rnwcinv_ai_models', []);
+
+    foreach ($models as $model) {
+        $name = is_object($model) ? $model->Name : (isset($model['Name']) ? $model['Name'] : '');
+        if ($name === $modelName) {
+            return is_object($model) ? $model->APIKey : (isset($model['APIKey']) ? $model['APIKey'] : '');
+        }
+    }
+
+    return '';
 }

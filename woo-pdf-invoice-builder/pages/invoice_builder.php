@@ -8,6 +8,18 @@
 </script>
 
 <style type="text/css">
+ 
+    .pdfHeader , .pdfFooter , .pdfContent{
+        box-sizing: content-box !important;
+    }
+    .PDFElement.centered{
+                             display:table;
+                           }
+                             .PDFElement.centered .elementContent{
+                                display:table-cell;
+                                text-align: center;
+                                vertical-align: middle;
+                             }
 
     .conditionfield select{
         padding:0;
@@ -23,7 +35,7 @@
         display:inline-block;
         vertical-align:top;
 
-    }
+    } 
 
     .BorderContainer div[data-property-name="border-bottom-width"]{
         display:inline-block;
@@ -114,6 +126,9 @@ wp_enqueue_script('wcrbc-bootstrap',RednaoWooCommercePDFInvoice::$URL.'css/boots
 //wp_enqueue_script('wcrbc-pdfbuilder-bundle-style-2',RednaoWooCommercePDFInvoice::$URL.'js/pdfbuilder/release/styles.bundle.js');
 wp_enqueue_script('wcrbc-pdfbuilder-spectrum',RednaoWooCommercePDFInvoice::$URL.'js/lib/spectrum/spectrum.js',array('jquery'));
 wp_enqueue_script('wcrbc-pdfbuilder-bootstrapSlider',RednaoWooCommercePDFInvoice::$URL.'js/lib/bootstrapSlider/bootstrap-slider.js',array('jquery'));
+wp_enqueue_script('wcrbc-pdfbuilder-codemirror',RednaoWooCommercePDFInvoice::$URL.'js/lib/codeMirror/lib/codemirror.js',array('jquery'));
+wp_enqueue_script('wcrbc-pdfbuilder-codemirror-css',RednaoWooCommercePDFInvoice::$URL.'js/lib/codeMirror/mode/css/css.js',array('wcrbc-pdfbuilder-codemirror'));
+wp_enqueue_style('wcrbc-codemirror',RednaoWooCommercePDFInvoice::$URL.'js/lib/codeMirror/lib/codemirror.css');
 
 
 wp_enqueue_style('wcrbc-pdfbuilder-react-style',RednaoWooCommercePDFInvoice::$URL.'css/PageBuilderStyle.css');
@@ -313,7 +328,9 @@ wp_localize_script('wcrbc-pdfbuilder-react','rednaoPDFInvoiceParams',array(
     'SaveNonce'=>\wp_create_nonce('rnwcinv_savenonce'),
     'Categories'=>$categories,
     'Taxes'=>$taxes,
-    'TaxType'=>get_option('woocommerce_tax_total_display','')
+    'TaxType'=>get_option('woocommerce_tax_total_display',''),
+    'AIModels'=>rnwcinv_get_ai_model_names(),
+    'AIDefaultModel'=>rnwcinv_get_ai_default_model()
 
 ));
 if(!RednaoWooCommercePDFInvoice::IsPR())

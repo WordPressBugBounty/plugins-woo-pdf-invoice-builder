@@ -57,7 +57,7 @@ class TemplateExporter
                     $this->AddImage($currentField,$file,'URL_ID');
                 }
 
-                if(in_array($currentField->type,['qrcode']))
+                if(in_array($currentField->type,['qrcode','barcode']))
                     $needsPR=true;
             }
         }

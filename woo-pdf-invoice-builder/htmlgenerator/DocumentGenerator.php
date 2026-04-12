@@ -61,6 +61,7 @@ class DocumentGenerator
         $html="<html><body class='pdfBody' data-page-id='1'>";
         $html.='<style>
 
+
                 .table-meta
                 {
                     margin-top: 10px;
@@ -81,6 +82,16 @@ class DocumentGenerator
                            .PDFElement table{
                             border-collapse: collapse;
                            }    
+                            
+
+                           .PDFElement.centered{
+                             display:table;
+                           }
+                             .PDFElement.centered .elementContent{
+                                display:table-cell;
+                                text-align: center;
+                                vertical-align: middle;
+                             }
                          
                            
                            .PDFElement table td,.PDFElement table th{
@@ -108,6 +119,10 @@ class DocumentGenerator
                                 }                            
                  </style>';
         $html.='<style>'.$this->options->containerOptions->styles.'</style>';
+
+        if(isset($this->options->containerOptions->customCSS) && trim($this->options->containerOptions->customCSS) !== '') {
+            $html.='<style>'.$this->options->containerOptions->customCSS.'</style>';
+        }
 
         if(\RednaoWooCommercePDFInvoice::IsPR())
         {

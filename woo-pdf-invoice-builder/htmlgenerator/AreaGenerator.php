@@ -103,6 +103,10 @@ class AreaGenerator
         }
 
 
+        // Apply section background color if set (e.g. from AI templates)
+        if(isset($this->options->backgroundColor) && !empty($this->options->backgroundColor)){
+            $areaStyles['background-color'] = $this->options->backgroundColor;
+        }
 
         $html=$this->tagGenerator->StartTag('div',$this->options->position,$areaStyles,array('data-section-type'=>$this->options->position));
         foreach($this->fields as $field)
@@ -118,3 +122,4 @@ class AreaGenerator
     }
 
 }
+

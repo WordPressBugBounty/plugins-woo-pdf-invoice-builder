@@ -29,6 +29,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
     {
         add_action('wp_ajax_rednao_wcpdfinv_get_field_preview',array($this,'GetFieldPreview'));
         add_action('wp_ajax_rednao_wcpdfinv_get_qr_preview',array($this,'GetQrPreview'));
+        add_action('wp_ajax_rednao_wcpdfinv_get_barcode_preview',array($this,'GetBarcodePreview'));
         add_action('wp_ajax_rednao_wcpdfinv_get_designer_preview',array($this,'GetDesignerPreview'));
         add_action('wp_ajax_rednao_wcpdfinv_save',array($this,'Save'));
         add_action('wp_ajax_rednao_search_invoice',array($this,'SearchInvoice'));
@@ -52,6 +53,11 @@ final class RednaoWooCommercePDFInvoiceAjax{
         add_action('wp_ajax_rednao_wcpdfinv_manage_view',array($this,'ManageView'));
         add_action('wp_ajax_rednao_wcpdfinv_download',array($this,'Download'));
         add_action('wp_ajax_rednao_wcpdfinv_save_next_number',array($this,'SaveNextNumber'));
+        add_action('wp_ajax_rednao_wcpdfinv_ai_generate_template',array($this,'AIGenerateTemplate'));
+        add_action('wp_ajax_rednao_wcpdfinv_ai_preview_template',array($this,'AIPreviewTemplate'));
+        add_action('wp_ajax_rednao_wcpdfinv_ai_get_prompt',array($this,'AIGetPrompt'));
+        add_action('wp_ajax_rednao_wcpdfinv_ai_process_external',array($this,'AIProcessExternalResponse'));
+        add_action('wp_ajax_rednao_wcpdfinv_ai_upload_temp_image',array($this,'AIUploadTempImage'));
 
 
     }
@@ -510,6 +516,14 @@ final class RednaoWooCommercePDFInvoiceAjax{
         $this->SendSuccessMessage(array('image'=>$field->GetImage()));
     }
 
+    public function GetBarcodePreview(){
+        if(wp_verify_nonce($this->GetStringValue('nonce',true),'rnwcinv_savenonce')==false)
+            $this->SendErrorMessage('Invalid request');
+        $options=(object)$this->GetArrayValue('options');
+        $field=FieldFactory::GetField($options,new OrderValueRetriever(null,null,true,null,null));
+        $this->SendSuccessMessage(array('image'=>$field->GetImage()));
+    }
+
     public function InspectOrder(){
         $processor=new HttpPostProcessor();
 
@@ -912,6 +926,10 @@ final class RednaoWooCommercePDFInvoiceAjax{
         $result=false;
         $rowId=0;
         $html='';
+
+        // Promote any temp images to WordPress media library before saving
+        $pages = $this->promoteTempImages($pages, $nonce);
+
         if($pageId==0||$pageId==null)
         {
 
@@ -962,6 +980,218 @@ final class RednaoWooCommercePDFInvoiceAjax{
         }
     }
 
+    /**
+     * Uploads a base64-encoded image to the temp folder.
+     * Used by the AI template converter to save SVG→JPEG conversions.
+     */
+    public function AIUploadTempImage() {
+        RednaoWooCommercePDFInvoice::CheckIfPDFAdmin();
+        $processor = new HttpPostProcessor();
+        $data = $processor->data;
+
+        $nonce = isset($data->nonce) ? $data->nonce : '';
+        if (wp_verify_nonce($nonce, 'rnwcinv_savenonce') === false) {
+            $processor->SendErrorMessage('Invalid nonce');
+        }
+
+        $imageData = isset($data->imageData) ? $data->imageData : '';
+        $filename = isset($data->filename) ? sanitize_file_name($data->filename) : 'image.jpg';
+
+        if (empty($imageData)) {
+            $processor->SendErrorMessage('No image data provided');
+        }
+
+        // Decode the base64 image
+        $decoded = base64_decode($imageData);
+        if ($decoded === false) {
+            $processor->SendErrorMessage('Invalid base64 image data');
+        }
+
+        // Save to public temp folder (accessible via HTTP for PDF preview)
+        require_once RednaoWooCommercePDFInvoice::$DIR . 'utilities/FileManager.php';
+        $fileManager = new \rnwcinv\utilities\FileManager();
+        $tempFolder = $fileManager->GetPublicTemporalFolderPath();
+        $filePath = $tempFolder . $filename;
+
+        if (file_put_contents($filePath, $decoded) === false) {
+            $processor->SendErrorMessage('Failed to save image file');
+        }
+
+        // Calculate the relative path from the FileManager root
+        $rootPath = $fileManager->GetRootFolderPath();
+        $relativePath = str_replace($rootPath, '', $filePath);
+
+        // Build the URL for the saved file
+        $url = $fileManager->GetFontURL() . $relativePath;
+
+        $processor->SendSuccessMessage([
+            'url' => $url,
+            'filePath' => $relativePath
+        ]);
+    }
+
+    /**
+     * Scans all fields in the pages JSON and promotes temp images to WordPress media.
+     * Handles:
+     *   - type=image fields with FilePath (SVG conversions)
+     *   - type=text fields with inline <img data-file-path="..."> tags (emoji conversions)
+     * Returns the modified pages JSON string.
+     */
+    private function promoteTempImages($pagesJson, $nonce) {
+        if (empty($pagesJson)) return $pagesJson;
+
+        $pages = json_decode($pagesJson);
+        if (!is_array($pages)) return $pagesJson;
+
+        require_once RednaoWooCommercePDFInvoice::$DIR . 'utilities/FileManager.php';
+        $fileManager = new \rnwcinv\utilities\FileManager();
+        $rootPath = $fileManager->GetRootFolderPath();
+        $modified = false;
+
+        foreach ($pages as $page) {
+            if (!isset($page->fields) || !is_array($page->fields)) continue;
+
+            foreach ($page->fields as $field) {
+                if (!isset($field->type)) continue;
+
+                // Case 1: Image fields with FilePath (SVG→JPEG from AI)
+                if ($field->type === 'image') {
+                    if (empty($field->FilePath)) continue;
+                    if (!empty($field->URL_ID)) continue; // Already has a WP attachment
+
+                    $result = $this->promoteFileToMedia($field->FilePath, $rootPath, $fileManager);
+                    if ($result !== null) {
+                        $field->URL = $result['url'];
+                        $field->URL_ID = $result['attachmentId'];
+                        unset($field->FilePath);
+                        $modified = true;
+                    }
+                }
+
+                // Case 2: Text fields with inline <img data-file-path="..."> (emoji PNGs)
+                if ($field->type === 'text' && !empty($field->Text)) {
+                    $textHtml = $field->Text;
+                    $textModified = false;
+
+                    // Find all <img> tags with data-file-path
+                    $textHtml = preg_replace_callback(
+                        '/<img([^>]*?)data-file-path=["\']([^"\']+)["\']([^>]*?)\/?>/i',
+                        function($matches) use ($rootPath, $fileManager, &$textModified) {
+                            $beforeAttr = $matches[1];
+                            $relativePath = $matches[2];
+                            $afterAttr = $matches[3];
+
+                            $result = $this->promoteFileToMedia($relativePath, $rootPath, $fileManager);
+                            if ($result === null) {
+                                return $matches[0]; // Keep original if promotion fails
+                            }
+
+                            $textModified = true;
+
+                            // Rebuild the tag: update src, add data-wp-id, remove data-file-path
+                            $newTag = '<img' . $beforeAttr . $afterAttr . '/>';
+                            // Remove any existing src and data-wp-id
+                            $newTag = preg_replace('/\s*src=["\'][^"\']*["\']/', '', $newTag);
+                            $newTag = preg_replace('/\s*data-wp-id=["\'][^"\']*["\']/', '', $newTag);
+                            // Insert new attributes after <img
+                            $newTag = preg_replace(
+                                '/^<img/',
+                                '<img src="' . esc_attr($result['url']) . '" data-wp-id="' . intval($result['attachmentId']) . '"',
+                                $newTag
+                            );
+                            return $newTag;
+                        },
+                        $textHtml
+                    );
+
+                    if ($textModified) {
+                        $field->Text = $textHtml;
+                        $modified = true;
+                    }
+                }
+            }
+        }
+
+        if ($modified) {
+            return json_encode($pages);
+        }
+        return $pagesJson;
+    }
+
+    /**
+     * Promotes a single temp file to the WordPress media library.
+     * Validates the file path, copies to uploads, creates attachment.
+     *
+     * @param string $relativePath Relative path from the plugin's root folder (e.g. "public_temp/temp1/emoji_123.png")
+     * @param string $rootPath     Absolute root path from FileManager
+     * @param \rnwcinv\utilities\FileManager $fileManager
+     * @return array|null ['url' => string, 'attachmentId' => int] on success, null on failure
+     */
+    private function promoteFileToMedia($relativePath, $rootPath, $fileManager) {
+        // Security: reject path traversal
+        if (strpos($relativePath, '..') !== false) return null;
+
+        $absolutePath = $rootPath . ltrim($relativePath, '/\\');
+        if (!file_exists($absolutePath)) return null;
+
+        // Verify it's a valid image extension
+        $ext = strtolower(pathinfo($absolutePath, PATHINFO_EXTENSION));
+        $allowedExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        if (!in_array($ext, $allowedExts)) return null;
+
+        // Only promote files from the temp or public_temp folder
+        $tempRoot = $fileManager->GetTempFolderRootPath();
+        $publicTempRoot = $fileManager->GetPublicTempFolderRootPath();
+        $realAbsolute = realpath($absolutePath);
+        $realTemp = realpath($tempRoot);
+        $realPublicTemp = realpath($publicTempRoot);
+        if ($realAbsolute === false) return null;
+        $normalizedAbsolute = wp_normalize_path($realAbsolute);
+        $inTemp = ($realTemp !== false && strpos($normalizedAbsolute, wp_normalize_path($realTemp)) === 0);
+        $inPublicTemp = ($realPublicTemp !== false && strpos($normalizedAbsolute, wp_normalize_path($realPublicTemp)) === 0);
+        if (!$inTemp && !$inPublicTemp) return null;
+
+        // Promote to WordPress media library
+        $uploadDir = wp_upload_dir();
+        $targetFilename = basename($absolutePath);
+
+        // Ensure unique filename
+        $uniqueName = wp_unique_filename($uploadDir['path'], $targetFilename);
+        $targetPath = $uploadDir['path'] . '/' . $uniqueName;
+
+        // Copy file to uploads
+        if (!copy($absolutePath, $targetPath)) return null;
+
+        // Get the MIME type
+        $mimeType = wp_check_filetype(basename($targetPath));
+
+        // Create attachment
+        $attachment = [
+            'guid'           => $uploadDir['url'] . '/' . basename($targetPath),
+            'post_mime_type' => $mimeType['type'],
+            'post_title'     => sanitize_file_name(pathinfo(basename($targetPath), PATHINFO_FILENAME)),
+            'post_content'   => '',
+            'post_status'    => 'inherit'
+        ];
+
+        $attachmentId = wp_insert_attachment($attachment, $targetPath);
+        if (is_wp_error($attachmentId) || $attachmentId === 0) return null;
+
+        // Generate attachment metadata
+        require_once(ABSPATH . 'wp-admin/includes/image.php');
+        $attachData = wp_generate_attachment_metadata($attachmentId, $targetPath);
+        wp_update_attachment_metadata($attachmentId, $attachData);
+
+        // Clean up temp file
+        @unlink($absolutePath);
+
+        return [
+            'url' => wp_get_attachment_url($attachmentId),
+            'attachmentId' => $attachmentId
+        ];
+    }
+
+
 
     public function SendSuccessMessage($data)
     {
@@ -981,7 +1211,143 @@ final class RednaoWooCommercePDFInvoiceAjax{
         die;
     }
 
+    /**
+     * AI Template Generation handler.
+     * Processes user messages and generates PDF template data via AI.
+     */
+    public function AIGenerateTemplate(){
+        RednaoWooCommercePDFInvoice::CheckIfPDFAdmin();
+        $processor = new HttpPostProcessor();
+        $nonce = $processor->GetRequired('nonce');
+        
+        if(wp_verify_nonce($nonce, 'rnwcinv_savenonce') === false){
+            $processor->SendErrorMessage('Invalid request');
+        }
 
+        $data = $processor->data;
+        $message = isset($data->message) ? $data->message : '';
+        $history = isset($data->history) && is_array($data->history) ? $data->history : [];
+        $model = isset($data->model) ? $data->model : rnwcinv_get_ai_default_model();
+        $files = isset($data->files) && is_array($data->files) ? $data->files : [];
+
+        // Get the API key for the selected model
+        $apiKey = rnwcinv_get_ai_api_key($model);
+        if(empty($apiKey)){
+            $processor->SendErrorMessage('No API key configured for this model. Please go to Settings > AI to add one.');
+        }
+
+        require_once RednaoWooCommercePDFInvoice::$DIR . 'api/ai/AITemplateProcessor.php';
+        $aiProcessor = new \rnwcinv\api\AITemplateProcessor();
+        $result = $aiProcessor->process($message, $history, $model, $apiKey, $files);
+
+        if(isset($result['error'])){
+            $processor->SendErrorMessage($result['error']);
+        }
+
+        // Return the HTML and updated history to the frontend
+        $processor->SendSuccessMessage([
+            'html'    => isset($result['html']) ? $result['html'] : '',
+            'history' => isset($result['history']) ? $result['history'] : []
+        ]);
+    }
+
+    /**
+     * AJAX handler: Generate a real PDF preview from DocumentOptions.
+     * Returns base64-encoded PDF data.
+     * 
+     * Data arrives via WpAjaxPost which wraps everything in $_POST['data'] as JSON.
+     */
+    public function AIPreviewTemplate(){
+        $processor=new HttpPostProcessor();
+
+        $rawData = isset($_POST['data']) ? stripslashes($_POST['data']) : '';
+        if(empty($rawData)){
+            $processor->SendErrorMessage('No template data provided');
+        }
+
+        $data = json_decode($rawData);
+        if($data === null || !isset($data->pageOptions)){
+            $processor->SendErrorMessage('Invalid template data');
+        }
+
+        // pageOptions arrives as a JSON string inside data — decode it
+        $pageOptions = is_string($data->pageOptions) ? json_decode($data->pageOptions) : $data->pageOptions;
+        if($pageOptions === null){
+            $processor->SendErrorMessage('Could not parse template options');
+        }
+
+        require_once RednaoWooCommercePDFInvoice::$DIR . 'api/ai/AITemplateProcessor.php';
+        \rnwcinv\Managers\LogManager::LogDebug("=== AI DOCUMENT OPTIONS ===\r\n" . json_encode($pageOptions, JSON_PRETTY_PRINT) . "\r\n=== END DOCUMENT OPTIONS ===");
+        $aiProcessor = new \rnwcinv\api\AITemplateProcessor();
+        $result = $aiProcessor->generatePreview($pageOptions);
+
+        if(isset($result['error'])){
+            $processor->SendErrorMessage($result['error']);
+        }
+
+        $processor->SendSuccessMessage([
+            'pdf' => isset($result['pdf']) ? $result['pdf'] : ''
+        ]);
+    }
+
+    /**
+     * AJAX handler: Return the compiled system prompt for external chat mode.
+     * The frontend uses this to build a complete prompt the user can copy.
+     */
+    public function AIGetPrompt(){
+        RednaoWooCommercePDFInvoice::CheckIfPDFAdmin();
+        $processor = new HttpPostProcessor();
+        $nonce = $processor->GetRequired('nonce');
+
+        if(wp_verify_nonce($nonce, 'rnwcinv_savenonce') === false){
+            $processor->SendErrorMessage('Invalid request');
+        }
+
+        require_once RednaoWooCommercePDFInvoice::$DIR . 'api/ai/AITemplateProcessor.php';
+        $aiProcessor = new \rnwcinv\api\AITemplateProcessor();
+        $systemPrompt = $aiProcessor->getSystemPrompt();
+
+        if($systemPrompt === false){
+            $processor->SendErrorMessage('Could not load AI prompt template file.');
+        }
+
+        $processor->SendSuccessMessage([
+            'systemPrompt' => $systemPrompt
+        ]);
+    }
+
+    /**
+     * AJAX handler: Process an externally-pasted AI response.
+     * Extracts HTML from the raw text (handles markdown code blocks, etc.).
+     */
+    public function AIProcessExternalResponse(){
+        RednaoWooCommercePDFInvoice::CheckIfPDFAdmin();
+        $processor = new HttpPostProcessor();
+        $nonce = $processor->GetRequired('nonce');
+
+        if(wp_verify_nonce($nonce, 'rnwcinv_savenonce') === false){
+            $processor->SendErrorMessage('Invalid request');
+        }
+
+        $data = $processor->data;
+        $responseText = isset($data->responseText) ? $data->responseText : '';
+
+        if(empty($responseText)){
+            $processor->SendErrorMessage('No response text provided.');
+        }
+
+        require_once RednaoWooCommercePDFInvoice::$DIR . 'api/ai/AITemplateProcessor.php';
+        $aiProcessor = new \rnwcinv\api\AITemplateProcessor();
+        $html = $aiProcessor->extractHtml($responseText);
+
+        if(empty($html)){
+            $processor->SendErrorMessage('Could not extract HTML from the provided response.');
+        }
+
+        $processor->SendSuccessMessage([
+            'html' => $html
+        ]);
+    }
 
 
 }

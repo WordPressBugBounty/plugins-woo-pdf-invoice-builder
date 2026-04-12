@@ -61,6 +61,7 @@ use rnwcinv\htmlgenerator\OrderValueRetriever;
 use rnwcinv\pr\fields\PDFCustomField;
 use rnwcinv\pr\fields\PDFLink;
 use rnwcinv\pr\fields\PDFQRCode;
+use rnwcinv\pr\fields\PDFBarCode;
 
 
 class FieldFactory
@@ -83,6 +84,8 @@ class FieldFactory
                 return new PDFLink($field,$orderValueRetriever);
             case 'qrcode':
                 return new PDFQRCode($field,$orderValueRetriever);
+            case 'barcode':
+                return new PDFBarCode($field,$orderValueRetriever);
             case 'table':
                 if(!$orderValueRetriever->useTestData)
                     return new PDFTable($field,$orderValueRetriever);
@@ -100,6 +103,8 @@ class FieldFactory
                 return new PDFSeparator($field,$orderValueRetriever);
             case "figure":
                 return new PDFFigure($field,$orderValueRetriever);
+            case 'rectangle':
+                return new PDFRectangle($field,$orderValueRetriever);
             case 'refundtable':
                 if(!$orderValueRetriever->useTestData)
                     return new PDFRefundTable($field,$orderValueRetriever);

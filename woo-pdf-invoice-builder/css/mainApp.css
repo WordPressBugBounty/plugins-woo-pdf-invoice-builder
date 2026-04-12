@@ -10,23 +10,41 @@
 }
 
 .toolbarItem{
-    display: inline-block;
+    display: flex;
     cursor: pointer;
     vertical-align: top;
-    user-select:none;
+    user-select: none;
+    border-radius: 6px;
+    transition: background-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
 }
 
 .toolbarItem:hover{
-    background-color:#f5f5f5;
+    background-color: #f0f4ff;
+    box-shadow: 0 1px 4px rgba(74, 144, 217, 0.12);
+    transform: translateY(-1px);
+}
+
+.toolbarItem:active{
+    transform: translateY(0px) scale(0.97);
 }
 
 .toolbarItemContainer{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100px;
-    padding:10px;
+    width: 100%;
+    padding: 10px 6px 8px;
     flex-direction: column;
+    gap: 6px;
+}
+
+.toolbarItemContainer p{
+    font-size: 11px;
+    font-weight: 500;
+    color: #4a5568;
+    text-align: center;
+    line-height: 1.2;
+    word-break: break-word;
 }
 
 .widgetList{
@@ -34,20 +52,28 @@
 }
 
 .toolbarItemContainer .imageContainer{
-    display:inline-block;
-    padding:5px;
-    background-color:white;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    border:1px #bfbfbf solid;
-    transition: border-color 100ms ease-in;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px;
+    background: linear-gradient(135deg, #ffffff, #f7f8fb);
+    border-radius: 8px;
+    border: 1px solid #e2e6ed;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+    width: 36px;
+    height: 36px;
+    box-sizing: border-box;
+}
 
-
+.toolbarItemContainer .imageContainer img{
+    max-width: 22px;
+    max-height: 22px;
+    object-fit: contain;
 }
 
 .toolbarItemContainer:hover .imageContainer{
-    border-color:#505050;
+    border-color: #a0b4d0;
+    box-shadow: 0 2px 6px rgba(74, 144, 217, 0.1);
 }
 
 .pdfPageContainer img{

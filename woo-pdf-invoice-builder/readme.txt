@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=edsev
 Tags: woocommerce pdf invoice, woocommerce invoice, woocommerce, pdf, invoices
 Requires at least: 3.3
 Tested up to: 6.9.5
-Stable tag: 1.2.164
+Stable tag: 2.0.0
 License: GPLv3 or later
 Author URI: https://wooinvoice.rednao.com/
 Plugin URI: https://wooinvoice.rednao.com/
@@ -94,7 +94,20 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 5. WooCommerce PDF Invoice. PDF Shipping Label
 6. WooCommerce PDF Invoice. PDF Packing Slip
 
+
+== Upgrade Notice ==
+= 2.0.0 =
+Version 2.0.0 includes several internal modifications. It is backward compatible, but it is advisable to review your existing templates after updating to ensure everything renders as expected.
+
 == Changelog ==
+= WooCommerce PDF Invoice Builder 2.0.0 =
+* New feature: AI-powered template generation
+* New feature: Barcode block support (Code 128, Code 39, EAN-13, EAN-8)
+* New feature: Undo/Redo support in the Page Builder
+* New feature: Emoji support
+* New feature: Document section style support
+* Bulk actions redesign
+* Several internal improvements and optimizations
 = WooCommerce PDF Invoice Builder 1.2.164 =
 * Making the download button customizable
 * Fixed issue with custom fields

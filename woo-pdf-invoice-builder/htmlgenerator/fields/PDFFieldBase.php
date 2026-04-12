@@ -118,7 +118,7 @@ abstract class PDFFieldBase
         if(isset($this->options->styles)&&isset($this->options->styles->width)&&$this->options->styles->width=='')
             unset($this->options->styles->width);
 
-        $html=$this->tagGenerator->StartTag('div','PDFElement',$this->options->styles,
+        $html=$this->tagGenerator->StartTag('div','PDFElement '.$this->GetPDFElementClasses(),$this->options->styles,
             array(
                 'id'=>'pdfField_'.$this->options->fieldID,
                 'data-element-id'=>$this->options->fieldID
@@ -131,6 +131,10 @@ abstract class PDFFieldBase
         $html.="</div>";
         return $html;
 
+    }
+    protected function GetPDFElementClasses()
+    {
+        return '';
     }
 
 

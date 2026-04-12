@@ -53,8 +53,13 @@ class FileManager
             if(!\is_dir($path))
                 continue;
             $this->recursiveRemove($path);
+        }
 
-
+        // Also clean public temp subfolders
+        $publicPath = $this->GetPublicTempFolderRootPath();
+        foreach (( glob( $publicPath.'*' ) ? glob( $publicPath.'*' ) : array() ) as $dir) {
+            if (!\is_dir($dir)) continue;
+            $this->recursiveRemove($dir);
         }
     }
 
@@ -79,6 +84,41 @@ class FileManager
 
         if(!\mkdir($tempFolderToReturn))
             throw new Exception('Could not create folder '.$tempFolderToReturn);
+
+        return $tempFolderToReturn;
+    }
+
+    /**
+     * Returns the root path for publicly-accessible temp files (no .htaccess deny).
+     * Used for AI-generated images that need to be served via HTTP.
+     */
+    public function GetPublicTempFolderRootPath()
+    {
+        $publicTempFolder = $this->GetRootFolderPath() . 'public_temp/';
+        if (!is_dir($publicTempFolder)) {
+            if (!mkdir($publicTempFolder, 0777, true))
+                throw new Exception('Could not create folder ' . $publicTempFolder);
+            // Only add index.php to prevent directory listing — NO .htaccess deny
+            @touch($publicTempFolder . 'index.php');
+        }
+        return $publicTempFolder;
+    }
+
+    /**
+     * Creates and returns a unique subfolder inside public_temp/.
+     * These files are accessible via HTTP (no .htaccess blocking).
+     */
+    public function GetPublicTemporalFolderPath()
+    {
+        $tempPath = $this->GetPublicTempFolderRootPath();
+        $i = 1;
+        $tempFolderToReturn = '';
+        while (is_dir($tempFolderToReturn = $tempPath . 'temp' . $i . '/')) {
+            $i++;
+        }
+
+        if (!\mkdir($tempFolderToReturn))
+            throw new Exception('Could not create folder ' . $tempFolderToReturn);
 
         return $tempFolderToReturn;
     }

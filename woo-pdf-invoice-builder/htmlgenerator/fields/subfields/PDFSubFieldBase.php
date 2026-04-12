@@ -139,6 +139,17 @@ abstract class PDFSubFieldBase extends PDFFieldBase {
                                     '</tbody>'.
                            '</table>';
         }
+
+        if($labelPosition=='inline')
+        {
+            $html='<table style="width:100%;">'.
+                                    '<tbody>'.
+                                        '<tr>'.
+                                            '<td style="vertical-align: top;text-align:left;"><div class="fieldLabelContainer" style="display:inline;"><p class="fieldLabel" style="margin:0;padding:0;display:inline;">'.$this->GetLabelText().'</p></div> <div class="fieldValueContainer" style="display:inline;"><p class="fieldValue" style="margin:0;padding:0;display:inline;">'.$this->GetInternalValueText().'</p></div></td>'.
+                                        '</tr>'.
+                                    '</tbody>'.
+                           '</table>';
+        }
         return $html;
     }
 
