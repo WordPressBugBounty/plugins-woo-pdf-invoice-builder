@@ -7,6 +7,14 @@ $options=json_decode($options);
 require_once 'PDFGenerator.php';
 
 $pageOptions=$options->pageOptions;
+
+// Security: prevent non-SuperAdmins from previewing templates with dynamic PHP code
+require_once RednaoWooCommercePDFInvoice::$DIR.'Managers/SaveManager.php';
+$pagesJson = isset($pageOptions->pages) ? json_encode($pageOptions->pages) : '';
+$containerOptionsJson = isset($pageOptions->containerOptions) ? json_encode($pageOptions->containerOptions) : '';
+$dynamicCodeError = SaveManager::ValidateDynamicCodeSecurity(0, $pagesJson, $containerOptionsJson);
+if($dynamicCodeError !== null)
+    die($dynamicCodeError);
 $previewType=$options->previewType;
 $orderNumberToPreview='';
 if(isset($options->orderNumberToPreview))

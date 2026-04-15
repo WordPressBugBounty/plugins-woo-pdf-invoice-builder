@@ -128,6 +128,9 @@ wp_enqueue_script('wcrbc-pdfbuilder-spectrum',RednaoWooCommercePDFInvoice::$URL.
 wp_enqueue_script('wcrbc-pdfbuilder-bootstrapSlider',RednaoWooCommercePDFInvoice::$URL.'js/lib/bootstrapSlider/bootstrap-slider.js',array('jquery'));
 wp_enqueue_script('wcrbc-pdfbuilder-codemirror',RednaoWooCommercePDFInvoice::$URL.'js/lib/codeMirror/lib/codemirror.js',array('jquery'));
 wp_enqueue_script('wcrbc-pdfbuilder-codemirror-css',RednaoWooCommercePDFInvoice::$URL.'js/lib/codeMirror/mode/css/css.js',array('wcrbc-pdfbuilder-codemirror'));
+wp_enqueue_script('wcrbc-pdfbuilder-codemirror-htmlmixed',RednaoWooCommercePDFInvoice::$URL.'js/lib/codeMirror/mode/htmlmixed/htmlmixed.js',array('wcrbc-pdfbuilder-codemirror'));
+wp_enqueue_script('wcrbc-pdfbuilder-codemirror-clike',RednaoWooCommercePDFInvoice::$URL.'js/lib/codeMirror/mode/clike/clike.js',array('wcrbc-pdfbuilder-codemirror'));
+wp_enqueue_script('wcrbc-pdfbuilder-codemirror-mode',RednaoWooCommercePDFInvoice::$URL.'js/lib/codeMirror/mode/php/php.js',array('wcrbc-pdfbuilder-codemirror-htmlmixed','wcrbc-pdfbuilder-codemirror-clike'));
 wp_enqueue_style('wcrbc-codemirror',RednaoWooCommercePDFInvoice::$URL.'js/lib/codeMirror/lib/codemirror.css');
 
 

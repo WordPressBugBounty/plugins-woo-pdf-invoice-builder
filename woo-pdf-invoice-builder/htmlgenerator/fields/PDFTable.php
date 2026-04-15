@@ -597,7 +597,7 @@ class PDFTable extends PDFFieldBase
                         {
                             $newItem['custom_'.$customFieldId]='test';
                         }else
-                            $newItem['custom_'.$customFieldId]=$this->GetCustomColumnValue($customFieldId,$newItem);
+                            $newItem['custom_'.$customFieldId]=$this->GetCustomColumnValue($currentColumn,$newItem);
 
                     }
                 }
@@ -716,66 +716,9 @@ class PDFTable extends PDFFieldBase
 
     }
 
-    private function GetCustomColumnValue($id,$row)
+    private function GetCustomColumnValue($column,$row)
     {
-
-        global $wpdb;
-        $results=$wpdb->get_results($wpdb->prepare('select custom_field_text from '.\RednaoWooCommercePDFInvoice::$CUSTOM_FIELDS_TABLE.' where custom_field_id=%s',$id),'ARRAY_A');
-        if($results!==false&&count($results)>0)
-        {
-            /** @var \WC_Order $order */
-            $order=$this->orderValueRetriever->order;
-
-            /** @var \WC_Order_Item_Product $item */
-            $item=$row['data'];
-
-
-
-
-            if(!isset($item['sku']))
-            {
-                $item['sku']=$row['sku'];
-            }
-            if(!isset($item['weight']))
-            {
-                $item['weight']=$row['weight'];
-            }
-            $evalResult='';
-            /** @noinspection PhpUnusedLocalVariableInspection  use on eval*/
-            $actions=$this;
-            try{
-                $customCode=$results[0]['custom_field_text'];
-                $customCode='use rnwcinv\pr\CustomField\CustomFieldFactory; use rnwcinv\pr\CustomField\utilities\CustomFieldValueRetriever;use rnwcinv\pr\CustomFieldV2;
-             use rnwcinv\pr\CustomFieldV2\BasicFields\CNumericField;
-             use rnwcinv\pr\CustomFieldV2\BasicFields\CArrayField;
-             use rnwcinv\pr\CustomFieldV2\BasicFields\CSimpleField;
-             use rnwcinv\pr\CustomFieldV2\BasicFields\CCurrencyField;
-             use rnwcinv\pr\CustomFieldV2\BasicFields\CImageField;
-        use rnwcinv\pr\CustomFieldV2\Wrappers\CRow; '.$customCode;
-
-                if(isset($row['type'])&&$row['type']=='fee')
-                {
-                    return '';
-                }
-                CustomFieldValueRetriever::$order=$order;
-                CustomFieldValueRetriever::$lineItem=$row['data'];
-                CustomFieldValueRetriever::$IsTableCustomField=true;
-                $evalResult= eval($customCode);
-                if($evalResult !=null&&$evalResult instanceof CSimpleField)
-                    $evalResult=$evalResult->GetHTML();
-            }catch(\Exception $ex)
-            {
-                echo $ex;
-            }
-
-            if($evalResult==null)
-                return '';
-            return $evalResult;
-        }
-        return '';
-
-
-
+        return apply_filters('rnwcinv_get_custom_column_value', '', $column, $row, $this);
     }
 
     public function FormatCurrency($value){

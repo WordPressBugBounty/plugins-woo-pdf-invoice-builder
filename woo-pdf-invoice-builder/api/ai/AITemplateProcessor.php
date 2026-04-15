@@ -42,10 +42,11 @@ class AITemplateProcessor {
      * @param array  $history  Previous conversation history for context
      * @param string $model    The AI model to use (e.g., 'gemini25pro', 'deepseek')
      * @param string $apiKey   The API key for the selected model
-     * @param array  $files    Attached files [{name, mimeType, base64Data}, ...]
+     * @param array  $files      Attached files [{name, mimeType, base64Data}, ...]
+     * @param string $promptName  Prompt filename without extension (default: 'template_generation_prompt')
      * @return array Response with HTML, message, and updated history
      */
-    public function process($message, $history = [], $model = '', $apiKey = '', $files = []) {
+    public function process($message, $history = [], $model = '', $apiKey = '', $files = [], $promptName = 'template_generation_prompt') {
         $this->model   = $model;
         $this->apiKey  = $apiKey;
         $this->files   = $files;
@@ -57,7 +58,7 @@ class AITemplateProcessor {
         }
 
         // Load the system prompt from the text file
-        $systemPrompt = $this->loadSystemPrompt();
+        $systemPrompt = $this->loadSystemPrompt($promptName);
         if ($systemPrompt === false) {
             return [
                 'error' => __('Could not load AI prompt template file.', 'woo-pdf-invoice-builder')
@@ -88,11 +89,8 @@ class AITemplateProcessor {
             return ['error' => $e->getMessage()];
         }
 
-        // Extract the HTML from the AI response
-        $html = $this->extractHtmlFromResponse($aiResponse);
-
-        // Log the AI HTML for debugging
-        \rnwcinv\Managers\LogManager::LogDebug("=== AI TEMPLATE HTML START ===\r\n" . $html . "\r\n=== AI TEMPLATE HTML END ===");
+        // Log the raw AI response for debugging
+        \rnwcinv\Managers\LogManager::LogDebug("=== AI RAW RESPONSE START ===\r\n" . $aiResponse . "\r\n=== AI RAW RESPONSE END ===");
 
         // Update conversation history
         $updatedHistory   = $history;
@@ -100,8 +98,8 @@ class AITemplateProcessor {
         $updatedHistory[] = ['role' => 'assistant', 'content' => $aiResponse];
 
         return [
-            'html'    => $html,
-            'history' => $updatedHistory
+            'response' => $aiResponse,
+            'history'  => $updatedHistory
         ];
     }
 
@@ -109,10 +107,11 @@ class AITemplateProcessor {
      * Public accessor for the compiled system prompt.
      * Used by the external chat feature to give users the prompt they need.
      *
+     * @param string $promptName Prompt filename without extension
      * @return string|false The prompt text, or false on failure
      */
-    public function getSystemPrompt() {
-        return $this->loadSystemPrompt();
+    public function getSystemPrompt($promptName = 'template_generation_prompt') {
+        return $this->loadSystemPrompt($promptName);
     }
 
     /**
@@ -129,10 +128,16 @@ class AITemplateProcessor {
     /**
      * Loads the system prompt from the template file and replaces placeholders.
      * 
+     * @param string $promptName Prompt filename without extension (sanitized to [a-zA-Z0-9_] only)
      * @return string|false The prompt text, or false on failure
      */
-    private function loadSystemPrompt() {
-        $promptFile = __DIR__ . '/template_generation_prompt.txt';
+    private function loadSystemPrompt($promptName = 'template_generation_prompt') {
+        // Sanitize: only allow alphanumeric and underscores to prevent directory traversal
+        if (!preg_match('/^[a-zA-Z0-9_]+$/', $promptName)) {
+            return false;
+        }
+
+        $promptFile = __DIR__ . '/prompts/' . $promptName . '.txt';
         
         if (!file_exists($promptFile)) {
             return false;

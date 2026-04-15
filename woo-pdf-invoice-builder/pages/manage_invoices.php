@@ -13,8 +13,8 @@
 
 <?php
 
-wp_enqueue_script('wcrbc-pdfbuilder-manage-invoices',RednaoWooCommercePDFInvoice::$URL.'js/dist/manageInvoices_bundle.js','jquery');
 wp_enqueue_script('rnwpdfi_translator', RednaoWooCommercePDFInvoice::$URL . 'js/lib/Translator/RNTranslator.js');
+wp_enqueue_script('wcrbc-pdfbuilder-manage-invoices',RednaoWooCommercePDFInvoice::$URL.'js/dist/manageInvoices_bundle.js',array('jquery','rnwpdfi_translator'));
 $manageInvoicesTranslations = require(RednaoWooCommercePDFInvoice::$DIR . 'jstranslations/manageInvoices.php');
 wp_localize_script('rnwpdfi_translator', 'RNTranslatorDictionary', $manageInvoicesTranslations);
 

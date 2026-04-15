@@ -708,7 +708,7 @@ class PDFRefundTable extends PDFFieldBase
                 return 'test';
             }
 
-            return $this->GetCustomColumnValue($column->customProperties->id,$i);
+            return $this->GetCustomColumnValue($column,$i);
         }
 
         if($type=='prod')
@@ -727,63 +727,10 @@ class PDFRefundTable extends PDFFieldBase
 
     }
 
-    private function GetCustomColumnValue($id,$index)
+    private function GetCustomColumnValue($column,$index)
     {
-
-        global $wpdb;
-        $results=$wpdb->get_results($wpdb->prepare('select custom_field_text from '.\RednaoWooCommercePDFInvoice::$CUSTOM_FIELDS_TABLE.' where custom_field_id=%s',$id),'ARRAY_A');
-        if($results!==false&&count($results)>0)
-        {
-            $order=$this->orderValueRetriever->order;
-
-            /** @var \WC_Order_Item_Product $item */
-            $item=$this->items[$index]['data'];
-
-            if(!isset($item['sku']))
-            {
-                $item['sku']=$this->items[$index]['sku'];
-            }
-            if(!isset($item['weight']))
-            {
-                $item['weight']=$this->items[$index]['weight'];
-            }
-            $evalResult='';
-            /** @noinspection PhpUnusedLocalVariableInspection  use on eval*/
-            $actions=$this;
-            try{
-                $customCode=$results[0]['custom_field_text'];
-                $customCode='use rnwcinv\pr\CustomField\CustomFieldFactory; use rnwcinv\pr\CustomField\utilities\CustomFieldValueRetriever;use rnwcinv\pr\CustomFieldV2;
-             use rnwcinv\pr\CustomFieldV2\BasicFields\CNumericField;
-             use rnwcinv\pr\CustomFieldV2\BasicFields\CArrayField;
-             use rnwcinv\pr\CustomFieldV2\BasicFields\CSimpleField;
-             use rnwcinv\pr\CustomFieldV2\BasicFields\CCurrencyField;
-             use rnwcinv\pr\CustomFieldV2\BasicFields\CImageField;
-        use rnwcinv\pr\CustomFieldV2\Wrappers\CRow; '.$customCode;
-
-                if(isset($this->items[$index]['type'])&&$this->items[$index]['type']=='fee')
-                {
-                    return '';
-                }
-                CustomFieldValueRetriever::$order=$order;
-                CustomFieldValueRetriever::$lineItem=$this->items[$index]['data'];
-                CustomFieldValueRetriever::$IsTableCustomField=true;
-                $evalResult= eval($customCode);
-
-                if($evalResult !=null&&$evalResult instanceof CSimpleField)
-                    $evalResult=$evalResult->GetHTML();
-            }catch(\Exception $ex)
-            {
-                echo $ex;
-            }
-
-            if($evalResult==null)
-                return '';
-            return $evalResult;
-        }
-        return '';
-
-
-
+        $row=$this->items[$index];
+        return apply_filters('rnwcinv_get_custom_column_value', '', $column, $row, $this);
     }
 
     public function FormatCurrency($value){
