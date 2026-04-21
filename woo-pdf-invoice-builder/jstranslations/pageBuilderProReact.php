@@ -1,0 +1,22 @@
+<?php return array(
+"PHP Code"=>__("PHP Code","woo-pdf-invoice-builder"),
+"Builder"=>__("Builder","woo-pdf-invoice-builder"),
+"Dynamic"=>__("Dynamic","woo-pdf-invoice-builder"),
+"Advanced Feature"=>__("Advanced Feature","woo-pdf-invoice-builder"),
+"Write your own PHP code to control this condition. Your code must return true for the condition to be applied, or false to skip it. You have access to the $order (WC_Order) variable."=>__("Write your own PHP code to control this condition. Your code must return true for the condition to be applied, or false to skip it. You have access to the $order (WC_Order) variable.","woo-pdf-invoice-builder"),
+"The AI did not return valid code. Please try rephrasing your request."=>__("The AI did not return valid code. Please try rephrasing your request.","woo-pdf-invoice-builder"),
+"The AI generated code that contains potentially unsafe operations and was rejected:"=>__("The AI generated code that contains potentially unsafe operations and was rejected:","woo-pdf-invoice-builder"),
+"Please try rephrasing your request."=>__("Please try rephrasing your request.","woo-pdf-invoice-builder"),
+"Code generated successfully."=>__("Code generated successfully.","woo-pdf-invoice-builder"),
+"You can preview it using the Preview button."=>__("You can preview it using the Preview button.","woo-pdf-invoice-builder"),
+"AI Code Assistant"=>__("AI Code Assistant","woo-pdf-invoice-builder"),
+"Describe what data you want to display..."=>__("Describe what data you want to display...","woo-pdf-invoice-builder"),
+"Weight × Quantity"=>__("Weight × Quantity","woo-pdf-invoice-builder"),
+"Show the product weight multiplied by the quantity"=>__("Show the product weight multiplied by the quantity","woo-pdf-invoice-builder"),
+"Product SKU List"=>__("Product SKU List","woo-pdf-invoice-builder"),
+"Display a comma-separated list of the products SKU"=>__("Display a comma-separated list of the products SKU","woo-pdf-invoice-builder"),
+"Discount Savings"=>__("Discount Savings","woo-pdf-invoice-builder"),
+"Create a table with the products that have a discount and show how much money the customer is saving"=>__("Create a table with the products that have a discount and show how much money the customer is saving","woo-pdf-invoice-builder"),
+"Describe what data you want to display and the AI will generate the PHP code for you."=>__("Describe what data you want to display and the AI will generate the PHP code for you.","woo-pdf-invoice-builder"),
+"Close"=>__("Close","woo-pdf-invoice-builder")
+);

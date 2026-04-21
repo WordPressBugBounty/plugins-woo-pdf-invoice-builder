@@ -90,14 +90,28 @@ abstract class PDFFieldBase
 
     public function GetHTML(){
 
-        if(!$this->orderValueRetriever->useTestData&&isset($this->options->Conditions)
+        $hasBuilderConditions = !$this->orderValueRetriever->useTestData&&isset($this->options->Conditions)
             &&count($this->options->Conditions)>0
-            &&\RednaoWooCommercePDFInvoice::IsPR())
+            &&\RednaoWooCommercePDFInvoice::IsPR();
+        $hasDynamicCondition = !$this->orderValueRetriever->useTestData
+            && isset($this->options->ConditionMode) && $this->options->ConditionMode === 'dynamic'
+            && !empty($this->options->DynamicConditionCode)
+            &&\RednaoWooCommercePDFInvoice::IsPR();
+
+        if($hasBuilderConditions || $hasDynamicCondition)
         {
 
             require_once \RednaoWooCommercePDFInvoice::$DIR.'pr/conditions/ConditionManager.php';
             $manager=new \ConditionManager($this->orderValueRetriever);
-            if($manager->ShouldProcess((object)array('conditionList'=>$this->options->Conditions), null ))
+            $conditionObj = (object)array('conditionList'=>isset($this->options->Conditions) ? $this->options->Conditions : []);
+            // Pass dynamic condition fields if present
+            if(isset($this->options->ConditionMode)) {
+                $conditionObj->ConditionMode = $this->options->ConditionMode;
+            }
+            if(isset($this->options->DynamicConditionCode)) {
+                $conditionObj->DynamicCode = $this->options->DynamicConditionCode;
+            }
+            if($manager->ShouldProcess($conditionObj, null ))
             {
                 return '';
             }

@@ -58,6 +58,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
         add_action('wp_ajax_rednao_wcpdfinv_ai_get_prompt',array($this,'AIGetPrompt'));
         add_action('wp_ajax_rednao_wcpdfinv_ai_process_external',array($this,'AIProcessExternalResponse'));
         add_action('wp_ajax_rednao_wcpdfinv_ai_upload_temp_image',array($this,'AIUploadTempImage'));
+        add_action('wp_ajax_rednao_wcpdfinv_onboarding_completed',array($this,'OnboardingCompleted'));
 
 
     }
@@ -614,6 +615,12 @@ final class RednaoWooCommercePDFInvoiceAjax{
         $this->SendSuccessMessage('');
     }
 
+    public function OnboardingCompleted(){
+        RednaoWooCommercePDFInvoice::CheckIfPDFAdmin();
+        update_option('wopdfinv_onboarding_completed', true);
+        $this->SendSuccessMessage('');
+    }
+
     public function DiagnoseError(){
         register_shutdown_function( array($this,'ShutDownCatch'));
         set_error_handler(array($this, 'CatchShutdownHandler'));
@@ -899,6 +906,8 @@ final class RednaoWooCommercePDFInvoiceAjax{
     }
 
     public function Save(){
+        \rnwcinv\Managers\LogManager::LogDebug("[SaveTemplate] === SAVE TEMPLATE START ===");
+
         $pageId=$this->GetNumberValue('pageId',true);
         $pageType=$this->GetNumberValue('pageType',true);
         $name=$this->GetStringValue('name',true);
@@ -911,10 +920,17 @@ final class RednaoWooCommercePDFInvoiceAjax{
         $myAccountDownload=$this->GetBoolValue('myAccountDownload',true);
         $myAccountDownloadText=$this->GetStringValue('myAccountDownloadText',false);
 
+        $isNew = ($pageId == 0 || $pageId == null);
+        \rnwcinv\Managers\LogManager::LogDebug("[SaveTemplate] Parameters extracted - pageId=$pageId, pageType=$pageType, name=\"$name\", isNew=" . ($isNew ? 'true' : 'false') . ", pagesLength=" . strlen($pages) . ", containerOptionsLength=" . strlen($containerOptions));
+
         $nonce=$this->GetStringValue('nonce',true);
 
         if(wp_verify_nonce($nonce,'rnwcinv_savenonce')==false)
+        {
+            \rnwcinv\Managers\LogManager::LogError("[SaveTemplate] Nonce verification FAILED");
             $this->SendErrorMessage('Invalid request');
+        }
+        \rnwcinv\Managers\LogManager::LogDebug("[SaveTemplate] Nonce verification passed");
 
         $orderActions=$this->GetOptionalJsonValue('orderActions');
         if($orderActions!=null)
@@ -928,17 +944,26 @@ final class RednaoWooCommercePDFInvoiceAjax{
         $html='';
 
         // Security: prevent non-SuperAdmins from injecting dynamic PHP code
-        require_once RednaoWooCommercePDFInvoice::$DIR.'managers/SaveManager.php';
+        require_once RednaoWooCommercePDFInvoice::$DIR.'Managers/SaveManager.php';
+        \rnwcinv\Managers\LogManager::LogDebug("[SaveTemplate] Validating dynamic code security...");
         $dynamicCodeError = SaveManager::ValidateDynamicCodeSecurity($pageId, $pages, $containerOptions);
         if($dynamicCodeError !== null)
+        {
+            \rnwcinv\Managers\LogManager::LogError("[SaveTemplate] Dynamic code security validation FAILED: $dynamicCodeError");
             $this->SendErrorMessage($dynamicCodeError);
+        }
+        \rnwcinv\Managers\LogManager::LogDebug("[SaveTemplate] Dynamic code security validation passed");
 
         // Promote any temp images to WordPress media library before saving
+        \rnwcinv\Managers\LogManager::LogDebug("[SaveTemplate] Promoting temp images...");
+        $pagesBeforePromotion = $pages;
         $pages = SaveManager::PromoteTempImages($pages);
+        $imagesPromoted = ($pages !== $pagesBeforePromotion);
+        \rnwcinv\Managers\LogManager::LogDebug("[SaveTemplate] Temp image promotion " . ($imagesPromoted ? "modified pages JSON" : "no changes needed"));
 
-        if($pageId==0||$pageId==null)
+        if($isNew)
         {
-
+            \rnwcinv\Managers\LogManager::LogDebug("[SaveTemplate] Inserting NEW template into database...");
 
             $result=$wpdb->insert(RednaoWooCommercePDFInvoice::$INVOICE_TABLE,array(
                 'name'=>$name,
@@ -956,7 +981,9 @@ final class RednaoWooCommercePDFInvoiceAjax{
                 'my_account_download_text'=>$myAccountDownloadText
             ));
             $rowId=$wpdb->insert_id;
+            \rnwcinv\Managers\LogManager::LogDebug("[SaveTemplate] INSERT result=" . ($result !== false ? 'success' : 'failed') . ", newRowId=$rowId");
         }else{
+            \rnwcinv\Managers\LogManager::LogDebug("[SaveTemplate] Updating EXISTING template (pageId=$pageId)...");
             $result=$wpdb->update(RednaoWooCommercePDFInvoice::$INVOICE_TABLE,array(
                 'name'=>$name,
                 'options'=>$containerOptions,
@@ -973,54 +1000,88 @@ final class RednaoWooCommercePDFInvoiceAjax{
                 'html'=>$html
             ),array('invoice_id'=>$pageId));
             $rowId=$pageId;
+            \rnwcinv\Managers\LogManager::LogDebug("[SaveTemplate] UPDATE result=" . ($result !== false ? "success (rows affected: $result)" : 'failed'));
         }
 
         do_action('rnpdf_invoice_process_extensions_after_save',array('pageId'=>$rowId,'extensions'=>$originalExtensions));
 
         if($result===false)
+        {
+            \rnwcinv\Managers\LogManager::LogError("[SaveTemplate] Database operation FAILED - Error: " . $wpdb->last_error);
             $this->SendErrorMessage('Data could not be inserted. Reason='.$wpdb->last_error);
+        }
         else
         {
             update_option('REDNAO_PDF_INVOICE_EDITED',true);
-            $this->SendSuccessMessage(array('row_id' => $rowId));
+            \rnwcinv\Managers\LogManager::LogDebug("[SaveTemplate] === SAVE TEMPLATE SUCCESS === rowId=$rowId");
+            $this->SendSuccessMessage(array('row_id' => $rowId, 'promotedPages' => $pages));
         }
     }
 
 
     /**
-     * Uploads a base64-encoded image to the temp folder.
-     * Used by the AI template converter to save SVG→JPEG conversions.
+     * Uploads an image file to the temp folder.
+     * Used by the AI template converter to save SVG→PNG conversions and emoji images.
+     * Accepts the image as a multipart/form-data file upload (key: 'imageFile').
      */
     public function AIUploadTempImage() {
         RednaoWooCommercePDFInvoice::CheckIfPDFAdmin();
-        $processor = new HttpPostProcessor();
+
+        try {
+            $processor = new HttpPostProcessor();
+        } catch (\Exception $e) {
+            echo json_encode(['success' => false, 'errorMessage' => 'Invalid request data: ' . $e->getMessage()]);
+            die();
+        }
+
         $data = $processor->data;
+
+        if ($data === null) {
+            $maxSize = ini_get('post_max_size');
+            $processor->SendErrorMessage(
+                'Failed to parse request data. The payload may be too large. ' .
+                'Current PHP post_max_size is ' . $maxSize . '.'
+            );
+        }
 
         $nonce = isset($data->nonce) ? $data->nonce : '';
         if (wp_verify_nonce($nonce, 'rnwcinv_savenonce') === false) {
             $processor->SendErrorMessage('Invalid nonce');
         }
 
-        $imageData = isset($data->imageData) ? $data->imageData : '';
-        $filename = isset($data->filename) ? sanitize_file_name($data->filename) : 'image.jpg';
-
-        if (empty($imageData)) {
-            $processor->SendErrorMessage('No image data provided');
+        // Read uploaded file from $_FILES (sent via multipart/form-data)
+        if (!isset($_FILES['imageFile']) || $_FILES['imageFile']['error'] !== UPLOAD_ERR_OK) {
+            $errorCode = isset($_FILES['imageFile']) ? $_FILES['imageFile']['error'] : -1;
+            $processor->SendErrorMessage('No image file received (error code: ' . $errorCode . ')');
         }
 
-        // Decode the base64 image
-        $decoded = base64_decode($imageData);
-        if ($decoded === false) {
-            $processor->SendErrorMessage('Invalid base64 image data');
+        $uploadedFile = $_FILES['imageFile'];
+        $filename = isset($data->filename) ? sanitize_file_name($data->filename) : sanitize_file_name($uploadedFile['name']);
+
+        // Validate file type using WordPress standard security practices
+        $allowedMimes = ['png' => 'image/png', 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg', 'gif' => 'image/gif', 'webp' => 'image/webp'];
+        $wp_filetype = wp_check_filetype_and_ext($uploadedFile['tmp_name'], $filename, $allowedMimes);
+
+        if (!$wp_filetype['type'] || !$wp_filetype['ext']) {
+            $processor->SendErrorMessage('Invalid file type.');
         }
+
+        // Use the sanitized filename returned by WordPress
+        $filename = $wp_filetype['proper_filename'] ? $wp_filetype['proper_filename'] : $filename;
 
         // Save to public temp folder (accessible via HTTP for PDF preview)
         require_once RednaoWooCommercePDFInvoice::$DIR . 'utilities/FileManager.php';
         $fileManager = new \rnwcinv\utilities\FileManager();
-        $tempFolder = $fileManager->GetPublicTemporalFolderPath();
+
+        try {
+            $tempFolder = $fileManager->GetPublicTemporalFolderPath();
+        } catch (\Exception $e) {
+            $processor->SendErrorMessage('Failed to create temp folder: ' . $e->getMessage());
+        }
+
         $filePath = $tempFolder . $filename;
 
-        if (file_put_contents($filePath, $decoded) === false) {
+        if (!move_uploaded_file($uploadedFile['tmp_name'], $filePath)) {
             $processor->SendErrorMessage('Failed to save image file');
         }
 

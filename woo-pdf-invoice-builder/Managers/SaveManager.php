@@ -110,6 +110,7 @@ class SaveManager
             return;
 
         $type = $field->type;
+        $fieldId = isset($field->fieldID) ? $field->fieldID : 'unknown';
 
         // Custom field block with dynamic code
         if($type === 'custom')
@@ -118,7 +119,6 @@ class SaveManager
             if($customFieldId === 'dynamic')
             {
                 $dynamicCode = isset($field->DynamicCode) ? $field->DynamicCode : '';
-                $fieldId = isset($field->fieldID) ? $field->fieldID : 'unknown';
                 $codes['customfield_' . $fieldId] = $dynamicCode;
             }
         }
@@ -138,11 +138,22 @@ class SaveManager
                     if(strpos($id, 'Dynamic__') === 0)
                     {
                         $code = isset($cp->code) ? $cp->code : '';
-                        $fieldId = isset($field->fieldID) ? $field->fieldID : 'unknown';
                         $codes['column_' . $fieldId . '_' . $id] = $code;
                     }
                 }
             }
+        }
+
+        // Dynamic condition codes (hide condition)
+        if(!empty($field->DynamicConditionCode))
+        {
+            $codes['conditionhide_' . $fieldId] = $field->DynamicConditionCode;
+        }
+
+        // Dynamic condition codes (remove rows condition)
+        if(!empty($field->DynamicHideRowsConditionCode))
+        {
+            $codes['conditionrows_' . $fieldId] = $field->DynamicHideRowsConditionCode;
         }
 
 
@@ -178,6 +189,24 @@ class SaveManager
             foreach($containerOptions->RepeatableFooterField as $field)
             {
                 self::ExtractDynamicCodesFromField($field, $codes);
+            }
+        }
+
+        // Template-level condition dynamic code
+        if(isset($containerOptions->conditions) && !empty($containerOptions->conditions->DynamicCode))
+        {
+            $codes['template_condition'] = $containerOptions->conditions->DynamicCode;
+        }
+
+        // Page-hide condition dynamic codes
+        if(isset($containerOptions->hidePageCondition) && is_array($containerOptions->hidePageCondition))
+        {
+            foreach($containerOptions->hidePageCondition as $idx => $hideCondition)
+            {
+                if(!empty($hideCondition->DynamicCode))
+                {
+                    $codes['pagehide_condition_' . $idx] = $hideCondition->DynamicCode;
+                }
             }
         }
 

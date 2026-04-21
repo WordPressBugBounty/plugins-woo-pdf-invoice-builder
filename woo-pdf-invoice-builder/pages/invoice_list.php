@@ -91,6 +91,21 @@ if(isset($_GET['action']))
                 $count -= 1;
             }
             break;
+        case 'bulk_delete':
+            if(!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'],'bulk-templates'))
+            {
+                echo '<script type="application/javascript">alert("'.esc_js(__('Invalid nonce, please refresh your screen and try again','woo-pdf-invoice-builder')).'")</script>';
+            }else
+            {
+                $ids = isset($_GET['template_ids']) ? array_map('intval', (array)$_GET['template_ids']) : array();
+                if(!empty($ids))
+                {
+                    $placeholders = implode(',', array_fill(0, count($ids), '%d'));
+                    $wpdb->query($wpdb->prepare('DELETE FROM ' . RednaoWooCommercePDFInvoice::$INVOICE_TABLE . ' WHERE invoice_id IN (' . $placeholders . ')', $ids));
+                    $count -= count($ids);
+                }
+            }
+            break;
         case 'edit':
             require_once RednaoWooCommercePDFInvoice::$DIR . 'pages/invoice_builder.php';
             return;
@@ -138,10 +153,28 @@ wp_enqueue_style('wcrbc-bootstrap-theme',RednaoWooCommercePDFInvoice::$URL.'css/
 <?php
 class InvoiceList extends WP_List_Table
 {
+    function __construct()
+    {
+        parent::__construct(array('plural' => 'templates'));
+    }
+
     function get_columns()
     {
         return array(
+            'cb'=>'<input type="checkbox" />',
             'name'=>__('Template Name','woo-pdf-invoice-builder')
+        );
+    }
+
+    function column_cb($item)
+    {
+        return sprintf('<input type="checkbox" name="template_ids[]" value="%d" />', $item->invoice_id);
+    }
+
+    function get_bulk_actions()
+    {
+        return array(
+            'bulk_delete' => __('Delete', 'woo-pdf-invoice-builder')
         );
     }
 
@@ -213,6 +246,7 @@ class InvoiceList extends WP_List_Table
 }
 
 
+echo '<style>.tablenav.top { margin-bottom: 10px; }</style>';
 echo '<form method="get">';
 echo "<input type='hidden' name='page' value='wc_invoice_menu'/>";
 $invoiceList=new InvoiceList();

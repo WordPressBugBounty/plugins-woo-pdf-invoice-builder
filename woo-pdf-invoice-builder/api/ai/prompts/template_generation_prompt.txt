@@ -20,6 +20,7 @@ RULES:
 
 3. FLAT STRUCTURE — CRITICAL
    Every element with data-desc MUST be a <div> that is a DIRECT CHILD of <header>, <main>, or <footer>.
+   EXCEPTION: A single <svg data-desc="background"> may be placed as a direct child of <body> for document-wide backgrounds (see ELEMENT TYPES).
    
    EXCEPTION — CONTAINER GROUPING:
    You may use <div data-desc="container"> to visually group elements inside a styled box (e.g. a bordered card, a shaded panel).
@@ -64,8 +65,7 @@ RULES:
    - <div> for text blocks and data fields (must be direct children of sections, when appropiate can contain emojis)
    - <table> ONLY for the product/line-item table, never for layout
    - <svg data-desc="image"> for non-background content images (logos, icons) — discrete visual objects
-   - <svg data-desc="background"> for background try to place all the background visual elements (if any) into one single background svg fore each section (when the background is only used for one section) or for each document (when the background is used for the entire document)
-     RULE: If text or other elements sit ON TOP of the SVG, use data-desc="background".
+   - <svg data-desc="background"> for background try to place all the background visual elements (if any) into one single background svg for the whole document or if only a section of the document need background create a background element for that section. RULE: If text or other elements sit ON TOP of the SVG, use data-desc="background". When the background is for the whole document add it as a child of the body tag, it shouldn't be part of main, header or footer. It should be right after the opening body tag. If you use a a background for the whole section dont add backgorund colors or background svgs to other sections
    - <div data-desc="qr_code"> for QR codes (see QR CODE section below)
    - Inline formatting inside divs is allowed: <strong>, <em>, <br>, <u>
    
@@ -229,6 +229,7 @@ IMAGE PLACEHOLDERS
 
 Use <svg> elements with data-desc="image" for non background elmeents (logos, icons, or decorative images)
 They must be DIRECT CHILDREN of <header>, <main>, or <footer> — never nested inside a <div>.
+EXCEPTION: A document-wide background <svg data-desc="background"> is placed as a direct child of <body> (see ELEMENT TYPES rule 4).
    
 Example:
    <svg data-desc="image" width="150" height="60" viewBox="0 0 150 60" style="position:absolute; left:20px; top:20px; display:block">

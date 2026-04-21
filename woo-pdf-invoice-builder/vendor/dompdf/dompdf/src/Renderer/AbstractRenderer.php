@@ -140,12 +140,33 @@ abstract class AbstractRenderer
 */
 
 
-                $image=Imagery::createFromFile($img);
-                $image->resize($width*$dpi/72,$height*$dpi/72);
-                $image->save($img,$type);
-                $url=$img;
+                $newWidth = (int)($width * $dpi / 72);
+                $newHeight = (int)($height * $dpi / 72);
 
-                list($img_w, $img_h) =getimagesize($url);
+                if (strtolower($type) === 'png') {
+                    // For PNGs: resize using direct GD calls to preserve alpha transparency.
+                    // The Imagery library's resize() uses imagecreatetruecolor() without
+                    // imagesavealpha(), which fills transparent areas with opaque black.
+                    $src = imagecreatefrompng($img);
+                    $dst = imagecreatetruecolor($newWidth, $newHeight);
+                    imagealphablending($dst, false);
+                    imagesavealpha($dst, true);
+                    $transparent = imagecolorallocatealpha($dst, 0, 0, 0, 127);
+                    imagefill($dst, 0, 0, $transparent);
+                    imagecopyresampled($dst, $src, 0, 0, 0, 0, $newWidth, $newHeight, imagesx($src), imagesy($src));
+                    imagepng($dst, $img);
+                    imagedestroy($src);
+                    imagedestroy($dst);
+                } else {
+                    // For non-PNG formats (JPEG, GIF, etc.): use Imagery library as before.
+                    // These formats don't have alpha transparency concerns.
+                    $image = Imagery::createFromFile($img);
+                    $image->resize($newWidth, $newHeight);
+                    $image->save($img, $type);
+                }
+                $url = $img;
+
+                list($img_w, $img_h) = getimagesize($url);
 
             }
 

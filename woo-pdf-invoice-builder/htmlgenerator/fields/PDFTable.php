@@ -35,7 +35,13 @@ class PDFTable extends PDFFieldBase
         if(isset($options->HideRowsCondition)&&count($options->HideRowsCondition)>0&&$orderValueRetriever!=null&&!$this->orderValueRetriever->useTestData)
         {
             $this->OrderToUse=new SplittedOrder($orderValueRetriever->order);
-            $this->OrderToUse->SetCondition($options->HideRowsCondition);
+            $this->OrderToUse->SetCondition($options->HideRowsCondition, $options);
+
+        }else if(isset($options->HideRowsConditionMode) && $options->HideRowsConditionMode === 'dynamic'
+            && !empty($options->DynamicHideRowsConditionCode) && $orderValueRetriever!=null && !$this->orderValueRetriever->useTestData)
+        {
+            $this->OrderToUse=new SplittedOrder($orderValueRetriever->order);
+            $this->OrderToUse->SetCondition([], $options);
 
         }else
             $this->OrderToUse=$orderValueRetriever->order;
