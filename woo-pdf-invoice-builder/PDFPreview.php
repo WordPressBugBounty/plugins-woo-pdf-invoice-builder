@@ -12,7 +12,8 @@ $pageOptions=$options->pageOptions;
 require_once RednaoWooCommercePDFInvoice::$DIR.'Managers/SaveManager.php';
 $pagesJson = isset($pageOptions->pages) ? json_encode($pageOptions->pages) : '';
 $containerOptionsJson = isset($pageOptions->containerOptions) ? json_encode($pageOptions->containerOptions) : '';
-$dynamicCodeError = SaveManager::ValidateDynamicCodeSecurity(0, $pagesJson, $containerOptionsJson);
+$conditionsJson = isset($pageOptions->conditions) ? (is_string($pageOptions->conditions) ? $pageOptions->conditions : json_encode($pageOptions->conditions)) : '';
+$dynamicCodeError = SaveManager::ValidateDynamicCodeSecurity(0, $pagesJson, $containerOptionsJson, $conditionsJson);
 if($dynamicCodeError !== null)
     die($dynamicCodeError);
 $previewType=$options->previewType;

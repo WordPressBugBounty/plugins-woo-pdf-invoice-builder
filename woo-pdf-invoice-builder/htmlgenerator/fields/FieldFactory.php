@@ -76,6 +76,16 @@ class FieldFactory
     {
 
         $type = $field->type;
+
+        // Premium-only field types: if running the free version, render a placeholder text instead
+        $prOnlyTypes = ['link', 'qrcode', 'barcode', 'custom'];
+        if (in_array($type, $prOnlyTypes) && !\RednaoWooCommercePDFInvoice::IsPR()) {
+            $placeholder = clone $field;
+            $placeholder->type = 'text';
+            $placeholder->Text = '<p style="text-align: center; color: #999999; font-style: italic;">Block not available in the free version</p>';
+            return new PDFText($placeholder, $orderValueRetriever);
+        }
+
         switch ($type)
         {
             case 'image':

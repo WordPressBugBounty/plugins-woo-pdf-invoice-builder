@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=edsev
 Tags: woocommerce pdf invoice, woocommerce invoice, woocommerce, pdf, invoices
 Requires at least: 3.3
 Tested up to: 6.9.5
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: GPLv3 or later
 Author URI: https://wooinvoice.rednao.com/
 Plugin URI: https://wooinvoice.rednao.com/
@@ -62,18 +62,39 @@ Didn't find the feature that you needed? [Let us know and we will add it!](https
 == Latest tutorials ==
 Automate Your WooCommerce PDFs: How to Send the Right Document Every Time
 
-https://www.youtube.com/watch?v=y0qWqZOAYUw
+==Getting Started==
+Learn how to create pdfs
 
-- [WooCommerce pdf invoices & packing slips and How to create them](https://wooinvoice.rednao.com/woocommerce-pdf-invoices-packing-slips-and-how-to-create-them/)
-- [woocommerce-pdf-invoices-top-5-tweaks-you-will-want-to-do](https://wooinvoice.rednao.com/woocommerce-pdf-invoices-packing-slips-creation-guide/woocommerce-pdf-invoices-top-5-tweaks-you-will-want-to-do/)
-- [How to send customer invoice in WooCommerce](https://wooinvoice.rednao.com/woocommerce-pdf-invoices-packing-slips-creation-guide/how-to-send-customer-invoice-in-woocommerce/)
-- [Password protect invoices](https://wooinvoice.rednao.com/knowledge-base/password-protect-invoices/)
-- [Adding conditional elements](https://wooinvoice.rednao.com/woocommerce-pdf-tutorials-adding-conditional-elements/)
-Show hide events elements of your pdf (like images or text) using conditions.
-- [Creating a WooCommerce credit note](https://wooinvoice.rednao.com/creating-a-woocommerce-credit-note/)
-Learn how to create credit notes using the new refund detail block.
-- [Creating a custom pdf invoice template](https://wooinvoice.rednao.com/woocommerce-pdf-invoices-packing-slips-creation-guide/creating-a-woocommerce-custom-invoice-template/)
-Tutorial about the most frequent customizations that you will want to do in your invoice template
+https://www.youtube.com/watch?v=iWJlOzEMlvg
+
+==Viewing or emailing pdfs==
+Learn how to automatically email the PDFs or view them whenever you need them.
+
+https://www.youtube.com/watch?v=9iT42ltUsFw
+
+
+==Bulkd view or download pdfs==
+Learn how to view or download multiple pdfs with one single action.
+
+https://www.youtube.com/watch?v=_r39XGxRFe8
+
+
+==Integrating with other plugins==
+Learn how to show info from other plugins, or create your own tables
+
+https://www.youtube.com/watch?v=_U16BoahFG8
+
+==Advanced Settings==
+Now that you know the basics, learn a few settings that you might need
+
+https://www.youtube.com/watch?v=f3BNHmCLdQ4
+
+==Using conditions==
+Learn how to conditionally create pdfs and add pages or elements in them
+
+https://www.youtube.com/watch?v=wMdrEXKvGO0
+
+
 == Frequently Asked Questions ==
 #### When I try to generate an invoice I get a 500 error/blank page, how can i fix it?
 This error is the most frequent issue and not only for this plugin but for any plugin that generates a pdf. That is why the plugin comes bundled with a tool done specifically to help you solve this particular issue. Please try it:http://wooinvoice.rednao.com/knowledge-base/fixing-blank-page-http-500-error/

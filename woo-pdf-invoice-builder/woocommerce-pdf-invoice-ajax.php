@@ -616,7 +616,9 @@ final class RednaoWooCommercePDFInvoiceAjax{
     }
 
     public function OnboardingCompleted(){
-        RednaoWooCommercePDFInvoice::CheckIfPDFAdmin();
+        $nonce=$this->GetStringValue('nonce',true);
+        if(wp_verify_nonce($nonce,'rnwcinv_savenonce')==false)
+            $this->SendErrorMessage('Invalid request');
         update_option('wopdfinv_onboarding_completed', true);
         $this->SendSuccessMessage('');
     }
@@ -946,7 +948,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
         // Security: prevent non-SuperAdmins from injecting dynamic PHP code
         require_once RednaoWooCommercePDFInvoice::$DIR.'Managers/SaveManager.php';
         \rnwcinv\Managers\LogManager::LogDebug("[SaveTemplate] Validating dynamic code security...");
-        $dynamicCodeError = SaveManager::ValidateDynamicCodeSecurity($pageId, $pages, $containerOptions);
+        $dynamicCodeError = SaveManager::ValidateDynamicCodeSecurity($pageId, $pages, $containerOptions, $conditionOptions);
         if($dynamicCodeError !== null)
         {
             \rnwcinv\Managers\LogManager::LogError("[SaveTemplate] Dynamic code security validation FAILED: $dynamicCodeError");

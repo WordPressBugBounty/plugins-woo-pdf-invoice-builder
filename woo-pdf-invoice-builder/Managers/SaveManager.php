@@ -12,22 +12,24 @@ class SaveManager
      * @param int $pageId The template ID (0 for new templates)
      * @param string $pagesJson The pages JSON string being saved
      * @param string $containerOptionsJson The container options JSON string being saved
+     * @param string $conditionsJson The template-level conditions JSON string being saved
      * @return string|null Error message if validation fails, null if OK
      */
-    public static function ValidateDynamicCodeSecurity($pageId, $pagesJson, $containerOptionsJson)
+    public static function ValidateDynamicCodeSecurity($pageId, $pagesJson, $containerOptionsJson, $conditionsJson = '')
     {
         if(is_super_admin())
             return null;
 
         $newDynamicCodes = self::ExtractDynamicCodes($pagesJson);
         self::ExtractDynamicCodesFromContainerOptions($containerOptionsJson, $newDynamicCodes);
+        self::ExtractDynamicCodesFromConditions($conditionsJson, $newDynamicCodes);
 
         if($pageId == 0 || $pageId == null)
         {
             // New template: no dynamic code allowed at all
             if(count($newDynamicCodes) > 0)
             {
-                return 'Only super admins can create templates with dynamic code';
+                return __('Only super admins can create templates with dynamic code','woo-pdf-invoice-builder');
             }
         }
         else
@@ -35,7 +37,7 @@ class SaveManager
             // Update: compare against existing template
             global $wpdb;
             $existingRow = $wpdb->get_row($wpdb->prepare(
-                'SELECT pages, options FROM '.RednaoWooCommercePDFInvoice::$INVOICE_TABLE.' WHERE invoice_id=%d',
+                'SELECT pages, options, conditions FROM '.RednaoWooCommercePDFInvoice::$INVOICE_TABLE.' WHERE invoice_id=%d',
                 $pageId
             ));
             $existingDynamicCodes = [];
@@ -45,6 +47,8 @@ class SaveManager
                     $existingDynamicCodes = self::ExtractDynamicCodes($existingRow->pages);
                 if(!empty($existingRow->options))
                     self::ExtractDynamicCodesFromContainerOptions($existingRow->options, $existingDynamicCodes);
+                if(!empty($existingRow->conditions))
+                    self::ExtractDynamicCodesFromConditions($existingRow->conditions, $existingDynamicCodes);
             }
 
             // Check if any new dynamic code was added or existing code was modified
@@ -52,11 +56,11 @@ class SaveManager
             {
                 if(!isset($existingDynamicCodes[$key]))
                 {
-                    return 'Only super admins can add dynamic code to templates';
+                    return __('Only super admins can add dynamic code to templates','woo-pdf-invoice-builder');
                 }
                 if($existingDynamicCodes[$key] !== $code)
                 {
-                    return 'Only super admins can edit dynamic code in templates';
+                    return __('Only super admins can edit dynamic code in templates','woo-pdf-invoice-builder');
                 }
             }
         }
@@ -156,6 +160,30 @@ class SaveManager
             $codes['conditionrows_' . $fieldId] = $field->DynamicHideRowsConditionCode;
         }
 
+        // Dynamic condition field rows inside Conditions array
+        if(isset($field->Conditions) && is_array($field->Conditions))
+        {
+            foreach($field->Conditions as $idx => $condition)
+            {
+                if(isset($condition->Field) && $condition->Field === 'dynamic' && !empty($condition->DynamicCode))
+                {
+                    $codes['conditionfieldrow_' . $fieldId . '_' . $idx] = $condition->DynamicCode;
+                }
+            }
+        }
+
+        // Dynamic condition field rows inside HideRowsCondition array
+        if(isset($field->HideRowsCondition) && is_array($field->HideRowsCondition))
+        {
+            foreach($field->HideRowsCondition as $idx => $condition)
+            {
+                if(isset($condition->Field) && $condition->Field === 'dynamic' && !empty($condition->DynamicCode))
+                {
+                    $codes['hiderowsfieldrow_' . $fieldId . '_' . $idx] = $condition->DynamicCode;
+                }
+            }
+        }
+
 
     }
 
@@ -198,6 +226,18 @@ class SaveManager
             $codes['template_condition'] = $containerOptions->conditions->DynamicCode;
         }
 
+        // Template-level condition field rows with dynamic code
+        if(isset($containerOptions->conditions) && isset($containerOptions->conditions->conditionList) && is_array($containerOptions->conditions->conditionList))
+        {
+            foreach($containerOptions->conditions->conditionList as $idx => $condition)
+            {
+                if(isset($condition->Field) && $condition->Field === 'dynamic' && !empty($condition->DynamicCode))
+                {
+                    $codes['templateconditionfieldrow_' . $idx] = $condition->DynamicCode;
+                }
+            }
+        }
+
         // Page-hide condition dynamic codes
         if(isset($containerOptions->hidePageCondition) && is_array($containerOptions->hidePageCondition))
         {
@@ -207,9 +247,56 @@ class SaveManager
                 {
                     $codes['pagehide_condition_' . $idx] = $hideCondition->DynamicCode;
                 }
+
+                // Page-hide condition field rows with dynamic code
+                if(isset($hideCondition->conditionList) && is_array($hideCondition->conditionList))
+                {
+                    foreach($hideCondition->conditionList as $cidx => $condition)
+                    {
+                        if(isset($condition->Field) && $condition->Field === 'dynamic' && !empty($condition->DynamicCode))
+                        {
+                            $codes['pagehideconditionfieldrow_' . $idx . '_' . $cidx] = $condition->DynamicCode;
+                        }
+                    }
+                }
             }
         }
 
+    }
+
+    /**
+     * Extracts dynamic codes from the template-level conditions JSON.
+     * This is the 'conditions' column in the DB, separate from containerOptions.
+     *
+     * @param string $conditionsJson The conditions JSON string
+     * @param array &$codes The codes array to populate
+     */
+    private static function ExtractDynamicCodesFromConditions($conditionsJson, &$codes)
+    {
+        if(empty($conditionsJson))
+            return;
+
+        $conditions = json_decode($conditionsJson);
+        if($conditions === null)
+            return;
+
+        // Template-level condition dynamic code
+        if(!empty($conditions->DynamicCode))
+        {
+            $codes['template_condition'] = $conditions->DynamicCode;
+        }
+
+        // Template-level condition field rows with dynamic code
+        if(isset($conditions->conditionList) && is_array($conditions->conditionList))
+        {
+            foreach($conditions->conditionList as $idx => $condition)
+            {
+                if(isset($condition->Field) && $condition->Field === 'dynamic' && !empty($condition->DynamicCode))
+                {
+                    $codes['templateconditionfieldrow_' . $idx] = $condition->DynamicCode;
+                }
+            }
+        }
     }
 
     /**

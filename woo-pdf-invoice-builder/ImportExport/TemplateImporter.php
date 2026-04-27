@@ -64,6 +64,18 @@ class TemplateImporter
         $this->ImportFields($options);
         $this->ImportFonts();
 
+        // Security: prevent non-SuperAdmins from importing templates with dynamic PHP code
+        require_once \RednaoWooCommercePDFInvoice::$DIR.'Managers/SaveManager.php';
+        $pagesJson = json_encode($options->pages);
+        $containerOptionsJson = json_encode($options->options);
+        $conditionsJson = isset($options->conditions) ? json_encode($options->conditions) : '';
+        $dynamicCodeError = \SaveManager::ValidateDynamicCodeSecurity(0, $pagesJson, $containerOptionsJson, $conditionsJson);
+        if($dynamicCodeError !== null)
+        {
+            $this->zip->close();
+            echo "<div class='alert alert-danger'>".esc_html($dynamicCodeError)."</div>";
+            return null;
+        }
 
         global $wpdb;
         $name=$options->name;
