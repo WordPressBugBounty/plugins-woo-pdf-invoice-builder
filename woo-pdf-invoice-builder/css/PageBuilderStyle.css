@@ -14,3 +14,18 @@
 .dragHighlight{
     border:1px dashed black;
 }
+
+.pdfSection {
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+/* For field blocks, move overflow clipping from the PDFElement to its
+   .elementContent child so drag/resize handles remain visible. */
+.PDFElement.pdftype-field {
+    overflow: visible !important;
+}
+
+.PDFElement.pdftype-field > .elementContent {
+    overflow: hidden;
+}

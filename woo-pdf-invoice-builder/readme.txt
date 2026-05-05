@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=edsev
 Tags: woocommerce pdf invoice, woocommerce invoice, woocommerce, pdf, invoices
 Requires at least: 3.3
 Tested up to: 6.9.5
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 License: GPLv3 or later
 Author URI: https://wooinvoice.rednao.com/
 Plugin URI: https://wooinvoice.rednao.com/
@@ -16,7 +16,7 @@ Create WooCommerce pdf invoices, packing slips, certificates and more, customize
 
 With WooCommerce PDF Invoice Builder you can easily create invoices, packing slips, credit notes or basically any kind of pdf using the first and only  pdf  drag and drop builder.
 
-https://www.youtube.com/watch?v=ThodLNN2D5w
+https://www.youtube.com/watch?v=o7gX8X92J_M
 
 >New template gallery added! [Click here to view or download a template](https://wooinvoice.rednao.com/woocommerce-invoice-builder-demos/). All the templates are 100% customizable using the drag and drop builder. Currently, there are few templates in the gallery but more will be added weekly.
 
@@ -121,6 +121,8 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 Version 2.0.0 includes several internal modifications. It is backward compatible, but it is advisable to review your existing templates after updating to ensure everything renders as expected.
 
 == Changelog ==
+= WooCommerce PDF Invoice Builder 2.0.4 =
+* Added online gallery to the plugin
 = WooCommerce PDF Invoice Builder 2.0.2 =
 * Fixed issue with saving a template
 = WooCommerce PDF Invoice Builder 2.0.1 =

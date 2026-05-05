@@ -334,7 +334,8 @@ wp_localize_script('wcrbc-pdfbuilder-react','rednaoPDFInvoiceParams',array(
     'TaxType'=>get_option('woocommerce_tax_total_display',''),
     'AIModels'=>rnwcinv_get_ai_model_names(),
     'AIDefaultModel'=>rnwcinv_get_ai_default_model(),
-    'OnboardingCompleted'=>get_option('wopdfinv_onboarding_completed', false)
+    'OnboardingCompleted'=>get_option('wopdfinv_onboarding_completed', false),
+    'GlobalTemplates'=>json_decode(file_get_contents(RednaoWooCommercePDFInvoice::$DIR.'templates/Global.json'), true)
 
 ));
 if(!RednaoWooCommercePDFInvoice::IsPR())

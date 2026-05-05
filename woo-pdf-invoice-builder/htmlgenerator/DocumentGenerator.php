@@ -116,7 +116,13 @@ class DocumentGenerator
                                 }
                                 @page{
                                     margin:0;
-                                }                            
+                                }
+
+                                .documentHeader, .documentContent, .documentFooter,
+                                .repeatableHeader, .repeatableFooter {
+                                    background-position: center center;
+                                    background-repeat: no-repeat;
+                                }
                  </style>';
         $html.='<style>'.$this->options->containerOptions->styles.'</style>';
 

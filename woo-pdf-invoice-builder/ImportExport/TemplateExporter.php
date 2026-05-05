@@ -30,13 +30,37 @@ class TemplateExporter
         $this->ParseCSSImages($options);
         if(isset($options->options->BackgroundFile)&&$options->options->BackgroundFile!='')
         {
-            $attachmentId=$options->options->BackgroundFile;
-            $file=get_attached_file($options->options->BackgroundFile);
+            $file=$this->ResolveFile($options->options->BackgroundFile);
+
             $options->options->BackgroundImage='';
             $options->options->BackgroundFile='';
             if($file!=false)
             {
-                $this->AddImage($options,$file,'BackgroundImage');
+                $fileName=$this->AddImage(null,$file,'');
+                // Store the filename at the root level (the importer reads it from here)
+                $options->BackgroundImage=$fileName;
+
+                // Also strip the background-image URL from the .pdfBody CSS rule,
+                // since the actual file is now in the ZIP and handled via BackgroundImage property.
+                // The importer will re-inject the new URL after importing the image.
+                $styles=$options->options->styles;
+                // Target only the .pdfBody rule and strip its background-related properties
+                $styles=preg_replace_callback(
+                    '/(\.pdfBody\s*\{)([^}]*)(\})/',
+                    function($m){
+                        $body=$m[2];
+                        $body=preg_replace('/background-image\s*:\s*url\([^)]*\)\s*;?/','',$body);
+                        $body=preg_replace('/background-repeat\s*:\s*[^;]+;?/','',$body);
+                        $body=preg_replace('/background-position\s*:\s*[^;]+;?/','',$body);
+                        $body=preg_replace('/background-size\s*:\s*[^;]+;?/','',$body);
+                        // If the rule is now empty, remove it entirely
+                        if(trim($body)=='')
+                            return '';
+                        return $m[1].$body.$m[3];
+                    },
+                    $styles
+                );
+                $options->options->styles=$styles;
             }
 
         }
@@ -49,7 +73,7 @@ class TemplateExporter
                 if($currentField->type=='image')
                 {
 
-                    $file=get_attached_file($currentField->URL_ID);
+                    $file=$this->ResolveFile($currentField->URL_ID);
                     $currentField->URL_ID='';
                     $currentField->URL='';
                     if($file===false)
@@ -133,6 +157,32 @@ class TemplateExporter
 
     }
 
+    /**
+     * Resolves a file reference to an absolute path.
+     * Handles both WordPress attachment IDs (numeric) and relative file paths
+     * from AI-generated templates (e.g. 'public_temp/temp467/file.png').
+     */
+    private function ResolveFile($fileRef)
+    {
+        if($fileRef===''||$fileRef===null)
+            return false;
+
+        // Numeric = WordPress attachment ID
+        if(is_numeric($fileRef))
+        {
+            $file=get_attached_file(intval($fileRef));
+            return ($file!==false && file_exists($file)) ? $file : false;
+        }
+
+        // String = relative path from FileManager root (AI templates)
+        $fileManager=new FileManager();
+        $absolutePath=$fileManager->GetRootFolderPath().$fileRef;
+        if(file_exists($absolutePath))
+            return $absolutePath;
+
+        return false;
+    }
+
     private function ExportFonts($styles)
     {
         $useCustomFonts=false;
@@ -209,7 +259,7 @@ class TemplateExporter
 
         foreach($matches as $currentMatch)
         {
-            if(count($matches)!=2)
+            if(count($currentMatch)!=2)
                 continue;
             $file=get_attached_file($currentMatch[1]);
             if($file==false)

@@ -59,6 +59,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
         add_action('wp_ajax_rednao_wcpdfinv_ai_process_external',array($this,'AIProcessExternalResponse'));
         add_action('wp_ajax_rednao_wcpdfinv_ai_upload_temp_image',array($this,'AIUploadTempImage'));
         add_action('wp_ajax_rednao_wcpdfinv_onboarding_completed',array($this,'OnboardingCompleted'));
+        add_action('wp_ajax_rednao_wcpdfinv_import_remote_template',array($this,'ImportRemoteTemplate'));
 
 
     }
@@ -1262,6 +1263,48 @@ final class RednaoWooCommercePDFInvoiceAjax{
     }
 
 
+    public function ImportRemoteTemplate(){
+        RednaoWooCommercePDFInvoice::CheckIfPDFAdmin();
+        $processor=new HttpPostProcessor();
+        $nonce=$processor->GetRequired('nonce');
+
+        if(wp_verify_nonce($nonce, 'rnwcinv_savenonce')===false){
+            $processor->SendErrorMessage('Invalid request');
+        }
+
+        $templateId=intval($processor->GetRequired('templateId'));
+        $zipUrl='https://wooinvoice.rednao.com/wp-content/uploads/sites/2/rndemoviewer/'.$templateId.'/Export.zip';
+
+        // Download the zip to a temp file
+        $tmpFile=download_url($zipUrl, 60);
+        if(is_wp_error($tmpFile)){
+            $processor->SendErrorMessage('Could not download the template: '.$tmpFile->get_error_message());
+        }
+
+        // Import using TemplateImporter, capturing echoed errors via output buffer
+        require_once RednaoWooCommercePDFInvoice::$DIR.'ImportExport/TemplateImporter.php';
+        $importer=new \rnwcinv\ImportExport\TemplateImporter();
+
+        ob_start();
+        $importer->Import($tmpFile);
+        $output=ob_get_clean();
+
+        // Clean up temp file
+        @unlink($tmpFile);
+
+        // If Import echoed anything, it means there was an error
+        if(!empty(trim($output))){
+            // Strip HTML tags to get a clean error message
+            $errorMessage=strip_tags($output);
+            $processor->SendErrorMessage(trim($errorMessage));
+        }
+
+        // Get the newly inserted template ID
+        global $wpdb;
+        $newId=$wpdb->insert_id;
+
+        $processor->SendSuccessMessage(array('templateId'=>$newId));
+    }
 
 }
 

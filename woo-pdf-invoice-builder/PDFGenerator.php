@@ -622,8 +622,19 @@ class RednaoPDFGenerator
             $driveOptions=$this->GetExtensionOptions('drive');
             if($driveOptions!=null&&$driveOptions->enabled==true)
             {
-                $dive=new DriveApi($driveOptions->jsonConfig);
-                $dive->InsertFile($this->GetFileName(),$this->dompdf->output(),$driveOptions->folderToUse);
+                try {
+                    if(isset($driveOptions->authMethod) && $driveOptions->authMethod === 'oauth'
+                        && isset($driveOptions->oauthToken) && isset($driveOptions->oauthToken->refresh_token)) {
+                        $dive = DriveApi::CreateFromOAuth((array)$driveOptions->oauthToken);
+                    } else {
+                        $dive = new DriveApi($driveOptions->jsonConfig);
+                    }
+                    $dive->InsertFile($this->GetFileName(),$this->dompdf->output(),$driveOptions->folderToUse);
+                } catch(Exception $ex) {
+                    if(class_exists('rnwcinv\Managers\LogManager')) {
+                        \rnwcinv\Managers\LogManager::LogError("Google Drive upload failed (order will continue normally): " . $ex->getMessage());
+                    }
+                }
             }
 
         }

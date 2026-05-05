@@ -55,10 +55,33 @@ class TemplateImporter
         }
 
 
-        if(isset($options->BackgroundImage))
+        if(isset($options->BackgroundImage) && $options->BackgroundImage!='')
         {
-            $this->ImportImage($options,$options->BackgroundImage,'BackgroundImage','BackgroundFile');
+            $cachedItem=$this->ImportImage(null,$options->BackgroundImage,'','');
+            if($cachedItem!=null)
+            {
+                // Store on containerOptions (which is what gets saved to DB)
+                $options->options->BackgroundImage=$cachedItem->URL;
+                $options->options->BackgroundFile=$cachedItem->FileId;
+                $options->options->BackgroundStyle=isset($options->options->BackgroundStyle)?$options->options->BackgroundStyle:'fill';
 
+                // Also inject the .pdfBody background-image CSS rule so PDF generation works
+                $bgStyle=$options->options->BackgroundStyle;
+                $bgCss='.pdfBody{background-image:url('.$cachedItem->URL.');';
+                if($bgStyle=='fill'){
+                    $bgCss.='background-repeat:no-repeat;background-position:center;background-size:100% 100%;';
+                }else if($bgStyle=='repeat'){
+                    $bgCss.='background-repeat:repeat;';
+                }else{
+                    $bgCss.='background-repeat:no-repeat;background-position:'.$bgStyle.';';
+                }
+                $bgCss.='}';
+                $options->options->styles.=$bgCss;
+            }
+            // Clean up root-level property (not needed in DB)
+            unset($options->BackgroundImage);
+            if(isset($options->BackgroundFile))
+                unset($options->BackgroundFile);
         }
 
         $this->ImportFields($options);
