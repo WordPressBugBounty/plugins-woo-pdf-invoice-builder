@@ -21,7 +21,7 @@ class PDFInvoiceNumberConverter extends PDFConverterBase {
         $seqType=$this->GetStringValue('seq_type');
         if($seqType=='seq')
         {
-            $number=get_post_meta( $this->order->GetId(),'REDNAO_WCPDFI_INVOICE_ID',true);
+            $number=$this->order->primaryOrder->get_meta('REDNAO_WCPDFI_INVOICE_ID',true);
             if(is_numeric($number))
                 $number=intval($number);
             else

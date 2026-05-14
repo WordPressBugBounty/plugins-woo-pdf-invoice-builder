@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=edsev
 Tags: woocommerce pdf invoice, woocommerce invoice, woocommerce, pdf, invoices
 Requires at least: 3.3
 Tested up to: 6.9.5
-Stable tag: 2.0.4
+Stable tag: 2.0.5
 License: GPLv3 or later
 Author URI: https://wooinvoice.rednao.com/
 Plugin URI: https://wooinvoice.rednao.com/
@@ -121,6 +121,8 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 Version 2.0.0 includes several internal modifications. It is backward compatible, but it is advisable to review your existing templates after updating to ensure everything renders as expected.
 
 == Changelog ==
+= WooCommerce PDF Invoice Builder 2.0.5 =
+* Fixed issue with HPOS and manage invoices
 = WooCommerce PDF Invoice Builder 2.0.4 =
 * Added online gallery to the plugin
 = WooCommerce PDF Invoice Builder 2.0.2 =

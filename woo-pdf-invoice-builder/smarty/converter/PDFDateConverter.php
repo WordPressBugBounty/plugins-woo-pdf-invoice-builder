@@ -24,7 +24,7 @@ class PDFDateConverter extends PDFConverterBase {
 
     public function GetRealFieldValue()
     {
-        return get_post_meta( $this->order->GetId(),'REDNAO_WCPDFI_INVOICE_DATE',true);
+        return $this->order->primaryOrder->get_meta('REDNAO_WCPDFI_INVOICE_DATE',true);
     }
 
 

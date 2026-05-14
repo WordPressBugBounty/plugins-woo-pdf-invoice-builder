@@ -20,6 +20,7 @@ use rnwcinv\pr\CustomFieldV2\BasicFields\CImageField;
 use rnwcinv\pr\CustomFieldV2\BasicFields\CSimpleField;
 use rnwcinv\pr\utilities\FontManager;
 use rnwcinv\utilities\InvoiceInitialDataGenerator;
+use rnwcinv\utilities\HPOSHelper;
 
 require_once RednaoWooCommercePDFInvoice::$DIR.'utilities/HttpPostProcessor.php';
 final class RednaoWooCommercePDFInvoiceAjax{
@@ -260,24 +261,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
         }
 
 
-        $results=$wpdb->get_results("
-            select invoice_id InvoiceId,order_id OrderId,UNIX_TIMESTAMP(date) Date,formatted_invoice_number FormattedInvoiceNumber,post.post_status Status,meta_total.meta_value Total,
-            concat(coalesce(meta_firstname.meta_value,''),\" \", coalesce(meta_lastname.meta_value,''),\" (\",user.display_name,\")\")  CustomerName
-            from ".RednaoWooCommercePDFInvoice::$INVOICES_CREATED_TABLE." created
-            join ".$wpdb->posts." post
-            on created.order_id=post.ID
-            left join ".$wpdb->postmeta." meta_total
-            on meta_total.post_id=post.ID and meta_total.meta_key='_order_total'
-            left join ".$wpdb->postmeta." meta_user
-            on post.ID=meta_user.post_id and meta_user.meta_key='_customer_user'
-            left join ".$wpdb->users." user
-            on user.ID=meta_user.meta_value 
-            left join ".$wpdb->usermeta." meta_firstname
-            on user.ID=meta_firstname.user_id and meta_firstname.meta_key='billing_first_name'
-            left join ".$wpdb->usermeta." meta_lastname
-            on user.ID=meta_lastname.user_id and meta_lastname.meta_key='billing_last_name'
-            where 
-        ".$where);
+        $results=$wpdb->get_results($this->BuildSearchQuery($wpdb, $where));
 
         $processor->SendSuccessMessage($results);
 
@@ -556,13 +540,18 @@ final class RednaoWooCommercePDFInvoiceAjax{
         if(!wp_verify_nonce('search_invoice','wc_search_invoice'))
             die('Forbidden');
 
+        $orders_meta_table = HPOSHelper::get_orders_meta_table();
+        $orders_table = HPOSHelper::get_orders_table();
+        $meta_fk = HPOSHelper::get_meta_order_id_column();
+        $orders_pk = HPOSHelper::get_orders_id_column();
+
         $query = "
-            select wp_posts.ID OrderNumber,invoice_date_meta.meta_value Date, invoice_number_meta.meta_value InvoiceNumber
-            from ".$wpdb->posts." 
-              join ".$wpdb->postmeta."  invoice_date_meta
-              on invoice_date_meta.post_id=wp_posts.ID and invoice_date_meta.meta_key='REDNAO_WCPDFI_INVOICE_DATE'
-              join ".$wpdb->postmeta."  invoice_number_meta
-              on invoice_number_meta.post_id=wp_posts.ID and invoice_number_meta.meta_key='REDNAO_WCPDFI_INVOICE_ID'
+            select orders_tbl.".$orders_pk." OrderNumber, invoice_date_meta.meta_value Date, invoice_number_meta.meta_value InvoiceNumber
+            from ".$orders_table." orders_tbl
+              join ".$orders_meta_table."  invoice_date_meta
+              on invoice_date_meta.".$meta_fk."=orders_tbl.".$orders_pk." and invoice_date_meta.meta_key='REDNAO_WCPDFI_INVOICE_DATE'
+              join ".$orders_meta_table."  invoice_number_meta
+              on invoice_number_meta.".$meta_fk."=orders_tbl.".$orders_pk." and invoice_number_meta.meta_key='REDNAO_WCPDFI_INVOICE_ID'
         ";
 
         if($criteria=="InvoiceNumber"){
@@ -576,7 +565,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
         }
 
         if($criteria=="OrderNumber"){
-            $query.=$wpdb->prepare(' where wp_posts.ID=%s',$processor->GetRequired('OrderNumber'));
+            $query.=$wpdb->prepare(' where orders_tbl.'.$orders_pk.'=%s',$processor->GetRequired('OrderNumber'));
         }
 
 
@@ -584,7 +573,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
 
         foreach($results as &$result)
         {
-            $result['Url']=wp_specialchars_decode(get_edit_post_link($result['OrderNumber']));
+            $result['Url']=wp_specialchars_decode(HPOSHelper::get_order_edit_link($result['OrderNumber']));
             $result['ViewUrl']=wp_specialchars_decode(wp_nonce_url( admin_url( "admin-ajax.php?action=rednao_wcpdfinv_generate_pdf&orderid=" . $result['OrderNumber'] ), 'rednao_wcpdfinv_generate_pdf_'.$result['OrderNumber'] ));
 
 
@@ -1304,6 +1293,57 @@ final class RednaoWooCommercePDFInvoiceAjax{
         $newId=$wpdb->insert_id;
 
         $processor->SendSuccessMessage(array('templateId'=>$newId));
+    }
+
+    /**
+     * Build the SQL query for the Search() method.
+     * Uses HPOS tables (wc_orders) when available, falls back to wp_posts/wp_postmeta.
+     *
+     * @param wpdb   $wpdb
+     * @param string $where
+     * @return string
+     */
+    private function BuildSearchQuery($wpdb, $where)
+    {
+        $created_table = RednaoWooCommercePDFInvoice::$INVOICES_CREATED_TABLE;
+
+        if (HPOSHelper::is_hpos_enabled()) {
+            $orders_table = $wpdb->prefix . 'wc_orders';
+            return "
+                select invoice_id InvoiceId, order_id OrderId, UNIX_TIMESTAMP(date) Date, formatted_invoice_number FormattedInvoiceNumber,
+                orders.status Status, orders.total_amount Total,
+                concat(coalesce(meta_firstname.meta_value,''),\" \", coalesce(meta_lastname.meta_value,''),\" (\",user.display_name,\")\") CustomerName
+                from ".$created_table." created
+                join ".$orders_table." orders
+                on created.order_id=orders.id
+                left join ".$wpdb->users." user
+                on user.ID=orders.customer_id
+                left join ".$wpdb->usermeta." meta_firstname
+                on user.ID=meta_firstname.user_id and meta_firstname.meta_key='billing_first_name'
+                left join ".$wpdb->usermeta." meta_lastname
+                on user.ID=meta_lastname.user_id and meta_lastname.meta_key='billing_last_name'
+                where ".$where;
+        }
+
+        // Legacy: wp_posts / wp_postmeta
+        return "
+            select invoice_id InvoiceId, order_id OrderId, UNIX_TIMESTAMP(date) Date, formatted_invoice_number FormattedInvoiceNumber,
+            post.post_status Status, meta_total.meta_value Total,
+            concat(coalesce(meta_firstname.meta_value,''),\" \", coalesce(meta_lastname.meta_value,''),\" (\",user.display_name,\")\") CustomerName
+            from ".$created_table." created
+            join ".$wpdb->posts." post
+            on created.order_id=post.ID
+            left join ".$wpdb->postmeta." meta_total
+            on meta_total.post_id=post.ID and meta_total.meta_key='_order_total'
+            left join ".$wpdb->postmeta." meta_user
+            on post.ID=meta_user.post_id and meta_user.meta_key='_customer_user'
+            left join ".$wpdb->users." user
+            on user.ID=meta_user.meta_value
+            left join ".$wpdb->usermeta." meta_firstname
+            on user.ID=meta_firstname.user_id and meta_firstname.meta_key='billing_first_name'
+            left join ".$wpdb->usermeta." meta_lastname
+            on user.ID=meta_lastname.user_id and meta_lastname.meta_key='billing_last_name'
+            where ".$where;
     }
 
 }

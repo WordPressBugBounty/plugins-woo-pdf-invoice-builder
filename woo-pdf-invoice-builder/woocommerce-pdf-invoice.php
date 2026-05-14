@@ -5,7 +5,7 @@
  * Description: Attach a PDF Invoice to your woocommerce...
  * Author: RedNao
  * Author URI: http://rednao.com
- * Version: 2.0.4
+ * Version: 2.0.5
  * Text Domain: woo-pdf-invoice-builder
  * Domain Path: /languages/
  * License: GPLv3
@@ -353,7 +353,7 @@ final class RednaoWooCommercePDFInvoice
         }
 
 
-        $order_type = $order instanceof WC_Order ? $order->get_type() : get_post_type($order_id);
+        $order_type = method_exists($order, 'get_type') ? $order->get_type() : get_post_type($order_id);
         if (in_array($email_id, array('no_stock', 'low_stock', 'backorder', 'customer_new_account', 'customer_reset_password')) || (!in_array($order_type, array('shop_order', 'shop_order_placehold')) && !(function_exists('wc_get_order') && wc_get_order($order_id)))) {
             return $attachments;
         }
@@ -381,7 +381,8 @@ final class RednaoWooCommercePDFInvoice
         if (!\mkdir($tmp_path))
             throw new Exception('Could not create folder ' . $tempFolderToReturn);
 
-        if (get_post_type($order_id) == 'wc_booking' && isset($order->order)) {
+        $detected_type = method_exists($order, 'get_type') ? $order->get_type() : get_post_type($order_id);
+        if ($detected_type == 'wc_booking' && isset($order->order)) {
             $order = $order->order;
         }
         $index = 0;
@@ -745,6 +746,13 @@ final class RednaoWooCommercePDFInvoice
 if (function_exists('RedNaoWCInvLoader'))
     die('Looks like you already have a version of the plugin installed (perhaps the free version)? please deactivate/delete it before activating this version ');
 
+
+// Declare HPOS (High-Performance Order Storage) compatibility
+add_action('before_woocommerce_init', function () {
+    if (class_exists('\Automattic\WooCommerce\Utilities\FeaturesUtil')) {
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
+    }
+});
 
 require_once plugin_dir_path(__FILE__) . 'autoload.php';
 
