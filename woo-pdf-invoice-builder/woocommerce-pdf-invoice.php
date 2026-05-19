@@ -5,7 +5,7 @@
  * Description: Attach a PDF Invoice to your woocommerce...
  * Author: RedNao
  * Author URI: http://rednao.com
- * Version: 2.0.5
+ * Version: 2.0.6
  * Text Domain: woo-pdf-invoice-builder
  * Domain Path: /languages/
  * License: GPLv3
@@ -775,13 +775,21 @@ function rnwcinv_get_ai_model_names() {
     $names = [];
 
     $labelMap = [
-        'gemini25pro' => 'Gemini 2.5 Pro',
-        'gemini3pro'  => 'Gemini 3 Pro',
-        'deepseek'    => 'DeepSeek',
+        'gemini25pro'    => 'Gemini 2.5 Pro',
+        'gemini3pro'     => 'Gemini 3 Pro',
+        'deepseek'       => 'DeepSeek',
+        'claudeopus47'   => 'Claude Opus 4.7',
+        'claudesonnet46' => 'Claude Sonnet 4.6',
     ];
 
     // Define display order
-    $order = ['gemini25pro' => 0, 'gemini3pro' => 1, 'deepseek' => 2];
+    $order = [
+        'gemini25pro'    => 0,
+        'gemini3pro'     => 1,
+        'deepseek'       => 2,
+        'claudeopus47'   => 3,
+        'claudesonnet46' => 4,
+    ];
 
     foreach ($models as $model) {
         $modelName = is_object($model) ? $model->Name : (isset($model['Name']) ? $model['Name'] : '');

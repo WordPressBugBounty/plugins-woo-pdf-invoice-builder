@@ -4869,30 +4869,76 @@ EOT;
             $imagick = new \Imagick($file);
             $imagick->setFormat('png');
 
-            // Get opacity channel (negative of alpha channel)
-            $alpha_channel = $imagickClonable ? clone $imagick : $imagick->clone();
-            $alpha_channel->separateImageChannel(\Imagick::CHANNEL_ALPHA);
-            $alpha_channel->negateImage(true);
-            $alpha_channel->writeImage($tempfile_alpha);
+            // ── rnwcinv patch: ImageMagick 7 compatibility ──────────────────────
+            // The original code below was written for ImageMagick 6.x. In IM 7+ two
+            // behaviors changed that broke transparent-PNG rendering:
+            //   1) separateImageChannel(CHANNEL_ALPHA) returns the raw alpha
+            //      (white=opaque) in IM 7, so the subsequent negateImage produces
+            //      the OPPOSITE of what PDF SMask expects (which is white=opaque).
+            //   2) COMPOSITE_COPYRED/GREEN/BLUE no longer respect source alpha —
+            //      in IM 7 they do a pure channel copy, turning transparent areas
+            //      (RGB=0,0,0) into black on the destination.
+            // The result on IM 7 is a black background with a white silhouette.
+            // The IM 6 path below is preserved verbatim; for IM 7+ we use the
+            // alpha-aware COMPOSITE_OVER + ALPHACHANNEL_REMOVE flow and skip the
+            // erroneous negateImage.
+            $imVersionString = \Imagick::getVersion()['versionString'];
+            $isIM7Plus = preg_match('/ImageMagick (\d+)\./', $imVersionString, $imVerMatch)
+                && (int)$imVerMatch[1] >= 7;
 
-            // Cast to 8bit+palette
-            $imgalpha_ = imagecreatefrompng($tempfile_alpha);
-            if($imgalpha_)
-            {
-                imagecopy($imgalpha, $imgalpha_, 0, 0, 0, 0, $wpx, $hpx);
-                imagedestroy($imgalpha_);
-                imagepng($imgalpha, $tempfile_alpha);
+            if ($isIM7Plus) {
+                // IM 7+: no negate; raw alpha already matches PDF SMask convention.
+                $alpha_channel = $imagickClonable ? clone $imagick : $imagick->clone();
+                $alpha_channel->separateImageChannel(\Imagick::CHANNEL_ALPHA);
+                $alpha_channel->writeImage($tempfile_alpha);
+
+                // Cast to 8bit+palette
+                $imgalpha_ = imagecreatefrompng($tempfile_alpha);
+                if($imgalpha_)
+                {
+                    imagecopy($imgalpha, $imgalpha_, 0, 0, 0, 0, $wpx, $hpx);
+                    imagedestroy($imgalpha_);
+                    imagepng($imgalpha, $tempfile_alpha);
+                }
+
+                // Alpha-aware composite over white, then strip alpha so the
+                // resulting PNG is a plain RGB image dompdf can embed.
+                $color_channels = new \Imagick();
+                $color_channels->newImage($wpx, $hpx, "#FFFFFF", "png");
+                $color_channels->setImageBackgroundColor("#FFFFFF");
+                $color_channels->compositeImage($imagick, \Imagick::COMPOSITE_OVER, 0, 0);
+                $color_channels->setImageAlphaChannel(\Imagick::ALPHACHANNEL_REMOVE);
+                $color_channels->writeImage($tempfile_plain);
+
+                $imgplain = imagecreatefrompng($tempfile_plain);
+            } else {
+                // ── Original ImageMagick 6.x path (unchanged) ───────────────────
+                // Get opacity channel (negative of alpha channel)
+                $alpha_channel = $imagickClonable ? clone $imagick : $imagick->clone();
+                $alpha_channel->separateImageChannel(\Imagick::CHANNEL_ALPHA);
+                $alpha_channel->negateImage(true);
+                $alpha_channel->writeImage($tempfile_alpha);
+
+                // Cast to 8bit+palette
+                $imgalpha_ = imagecreatefrompng($tempfile_alpha);
+                if($imgalpha_)
+                {
+                    imagecopy($imgalpha, $imgalpha_, 0, 0, 0, 0, $wpx, $hpx);
+                    imagedestroy($imgalpha_);
+                    imagepng($imgalpha, $tempfile_alpha);
+                }
+
+                // Make opaque image
+                $color_channels = new \Imagick();
+                $color_channels->newImage($wpx, $hpx, "#FFFFFF", "png");
+                $color_channels->compositeImage($imagick, \Imagick::COMPOSITE_COPYRED, 0, 0);
+                $color_channels->compositeImage($imagick, \Imagick::COMPOSITE_COPYGREEN, 0, 0);
+                $color_channels->compositeImage($imagick, \Imagick::COMPOSITE_COPYBLUE, 0, 0);
+                $color_channels->writeImage($tempfile_plain);
+
+                $imgplain = imagecreatefrompng($tempfile_plain);
             }
-
-            // Make opaque image
-            $color_channels = new \Imagick();
-            $color_channels->newImage($wpx, $hpx, "#FFFFFF", "png");
-            $color_channels->compositeImage($imagick, \Imagick::COMPOSITE_COPYRED, 0, 0);
-            $color_channels->compositeImage($imagick, \Imagick::COMPOSITE_COPYGREEN, 0, 0);
-            $color_channels->compositeImage($imagick, \Imagick::COMPOSITE_COPYBLUE, 0, 0);
-            $color_channels->writeImage($tempfile_plain);
-
-            $imgplain = imagecreatefrompng($tempfile_plain);
+            // ── end rnwcinv patch ───────────────────────────────────────────────
         } else {
             // allocated colors cache
             $allocated_colors = array();

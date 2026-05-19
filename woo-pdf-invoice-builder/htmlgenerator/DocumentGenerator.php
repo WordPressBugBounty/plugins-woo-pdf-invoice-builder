@@ -81,7 +81,13 @@ class DocumentGenerator
                                     
                            .PDFElement table{
                             border-collapse: collapse;
-                           }    
+                           }
+                          
+                           .PDFElement .footerTable{
+                            border-collapse: separate !important;
+                            border-spacing: 0 !important;
+                           }
+
                             
 
                            .PDFElement.centered{

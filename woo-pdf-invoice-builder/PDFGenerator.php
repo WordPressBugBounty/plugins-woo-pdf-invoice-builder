@@ -454,11 +454,15 @@ class RednaoPDFGenerator
             global $wooForceOTL;
             $wooForceOTL = $useRTL = \rnwcinv\utilities\Sanitizer::GetValueFromPath($this->options, ['containerOptions', 'forceOTL'], false);
         }
+        $this->html = apply_filters('rnwcinv_before_dompdf_render', $this->html, $this->fieldDictionary, $this);
         $this->dompdf->loadHtml($this->html, $this->fieldDictionary);
 
 
         $this->dompdf->setPaper($this->GetPageSize(), $this->orientation);
      //   $this->dompdf->getOptions()->setDefaultPaperSize($size);
+
+
+
         $this->dompdf->render();
 
     }

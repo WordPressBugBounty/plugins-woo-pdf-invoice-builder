@@ -4,10 +4,10 @@ RULES:
 
 1. PAGE SIZE & ORIENTATION
    The document default is {PAGE_WIDTH}px wide (A4 portrait).
-   Set the body to: width: {PAGE_WIDTH}px; margin: 0; padding: 0; font-family: Arial, sans-serif;
+   Set the body to: width: {PAGE_WIDTH}px; margin: 0; padding: 0; font-family: 'DejaVu Sans', sans-serif;
    
    For landscape orientation (e.g. shipping labels, certificates), add data-orientation="landscape" to the <body> tag:
-   <body data-orientation="landscape" style="width: 1123px; margin: 0; padding: 0; font-family: Arial, sans-serif;">
+   <body data-orientation="landscape" style="width: 1123px; margin: 0; padding: 0; font-family: 'DejaVu Sans', sans-serif;">
    When landscape, use width: 1123px (the A4 height becomes the width).
    
    Design all spacing, font sizes, and proportions for the chosen width.
@@ -192,7 +192,22 @@ SUMMARY ROWS — Place in <tfoot>. Each <tr> must have data-summary:
   tax ................... Tax row
   discount .............. Discount row
   fees .................. Fees row
+  refund ................ Refund row
   total ................. Grand total row
+  quantity .............. Total quantity row
+  weight ................ Total weight row
+
+STYLING SUMMARY ROWS — You can style each summary row with inline styles on
+the <tr> and/or on each individual cell. Allowed properties:
+  background-color, color
+  font-size, font-weight, font-style, font-family
+  padding, padding-top, padding-right, padding-bottom, padding-left
+  border-top, border-bottom   ← horizontal borders only on summary rows
+  text-align
+
+IMPORTANT — borders on summary rows: use `border-top` and `border-bottom`
+ONLY. Do NOT use the `border` shorthand or `border-left` / `border-right`.
+
 
 Example table:
 <table data-desc="product_table" style="width:100%; border-collapse:collapse">
@@ -215,9 +230,13 @@ Example table:
       <td colspan="2" style="text-align:right; padding:8px">Subtotal</td>
       <td style="text-align:right; padding:8px">$109.97</td>
     </tr>
-    <tr data-summary="total">
-      <td colspan="2" style="text-align:right; padding:8px"><strong>Total</strong></td>
-      <td style="text-align:right; padding:8px"><strong>$125.97</strong></td>
+    <tr data-summary="discount" style="color:#00a87e">
+      <td colspan="2" style="text-align:right; padding:8px">Discount (CIRCUS10)</td>
+      <td style="text-align:right; padding:8px">-$14.50</td>
+    </tr>
+    <tr data-summary="total" style="background-color:#ff4757; color:#ffffff; font-weight:bold; padding:14px 0">
+      <td colspan="2" style="text-align:right; padding:14px 8px">GRAND TOTAL</td>
+      <td style="text-align:right; padding:14px 8px">$125.97</td>
     </tr>
   </tfoot>
 </table>

@@ -56,6 +56,12 @@ abstract class AICallerBase {
             return new DeepSeekCaller($apiKey, $modelName);
         }
 
+        // Claude models all use the same caller
+        if (strpos($modelName, 'claude') === 0) {
+            require_once __DIR__ . '/ClaudeCaller.php';
+            return new ClaudeCaller($apiKey, $modelName);
+        }
+
         throw new \Exception(
             sprintf(__('Unsupported AI model: %s', 'woo-pdf-invoice-builder'), $modelName)
         );
