@@ -111,16 +111,20 @@ class FileManager
     public function GetPublicTemporalFolderPath()
     {
         $tempPath = $this->GetPublicTempFolderRootPath();
-        $i = 1;
+
+        // Use uniqid() with extra entropy so parallel AJAX requests (e.g. the AI
+        // converter uploading multiple SVG images at once) cannot race on the same
+        // folder name. The previous sequential scan + mkdir was not atomic and
+        // could fail when two requests both targeted the next free tempN.
         $tempFolderToReturn = '';
-        while (is_dir($tempFolderToReturn = $tempPath . 'temp' . $i . '/')) {
-            $i++;
+        for ($attempt = 0; $attempt < 5; $attempt++) {
+            $tempFolderToReturn = $tempPath . 'temp' . uniqid('', true) . '/';
+            if (!is_dir($tempFolderToReturn) && @\mkdir($tempFolderToReturn)) {
+                return $tempFolderToReturn;
+            }
         }
 
-        if (!\mkdir($tempFolderToReturn))
-            throw new Exception('Could not create folder ' . $tempFolderToReturn);
-
-        return $tempFolderToReturn;
+        throw new Exception('Could not create folder ' . $tempFolderToReturn);
     }
 
     public function MaybeCreateFolder($directory,$secure=false)

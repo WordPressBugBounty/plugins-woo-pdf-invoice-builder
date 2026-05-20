@@ -3,7 +3,7 @@
 "Builder"=>__("Builder","woo-pdf-invoice-builder"),
 "Dynamic"=>__("Dynamic","woo-pdf-invoice-builder"),
 "Advanced Feature"=>__("Advanced Feature","woo-pdf-invoice-builder"),
-"Write your own PHP code to control this condition. Your code must return true for the condition to be applied, or false to skip it. You have access to the $order (WC_Order) variable."=>__("Write your own PHP code to control this condition. Your code must return true for the condition to be applied, or false to skip it. You have access to the $order (WC_Order) variable.","woo-pdf-invoice-builder"),
+"Write your own PHP code to control this condition. Your code must return true for the condition to be applied, or false to skip it. You have access to the \$order (WC_Order) variable."=>__("Write your own PHP code to control this condition. Your code must return true for the condition to be applied, or false to skip it. You have access to the \$order (WC_Order) variable.","woo-pdf-invoice-builder"),
 "The AI did not return valid code. Please try rephrasing your request."=>__("The AI did not return valid code. Please try rephrasing your request.","woo-pdf-invoice-builder"),
 "The AI generated code that contains potentially unsafe operations and was rejected:"=>__("The AI generated code that contains potentially unsafe operations and was rejected:","woo-pdf-invoice-builder"),
 "Please try rephrasing your request."=>__("Please try rephrasing your request.","woo-pdf-invoice-builder"),

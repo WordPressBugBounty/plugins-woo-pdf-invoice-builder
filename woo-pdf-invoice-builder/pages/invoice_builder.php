@@ -26,6 +26,10 @@
         padding-right: 20px;
     }
 
+    body {
+        overflow: hidden;
+    }
+
 
     .media-modal{
         z-index: 10000000000000;
