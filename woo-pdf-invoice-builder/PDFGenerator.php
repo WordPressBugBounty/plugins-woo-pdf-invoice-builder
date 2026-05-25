@@ -629,7 +629,27 @@ class RednaoPDFGenerator
                 try {
                     if(isset($driveOptions->authMethod) && $driveOptions->authMethod === 'oauth'
                         && isset($driveOptions->oauthToken) && isset($driveOptions->oauthToken->refresh_token)) {
-                        $dive = DriveApi::CreateFromOAuth((array)$driveOptions->oauthToken);
+                        $templateId = isset($this->options->invoiceTemplateId) ? $this->options->invoiceTemplateId : 0;
+                        $optionKey  = 'rednao_drive_oauth_token_' . $templateId;
+
+                     
+                        $token   = (array)$driveOptions->oauthToken;
+                        $cached  = get_option($optionKey, null);
+                        if(is_array($cached) && isset($cached['created'])
+                            && (!isset($token['created']) || $cached['created'] > $token['created'])) {
+                            $token['access_token'] = isset($cached['access_token']) ? $cached['access_token'] : null;
+                            $token['expires_in']   = isset($cached['expires_in'])   ? $cached['expires_in']   : 3600;
+                            $token['created']      = $cached['created'];
+                        }
+
+                        $dive = DriveApi::CreateFromOAuth($token);
+                        if($dive->refreshedToken !== null) {
+                            update_option($optionKey, array(
+                                'access_token' => $dive->refreshedToken['access_token'],
+                                'expires_in'   => $dive->refreshedToken['expires_in'],
+                                'created'      => $dive->refreshedToken['created'],
+                            ), false);
+                        }
                     } else {
                         $dive = new DriveApi($driveOptions->jsonConfig);
                     }

@@ -1246,6 +1246,8 @@ final class RednaoWooCommercePDFInvoiceAjax{
             $processor->SendErrorMessage('Could not extract HTML from the provided response.');
         }
 
+        \rnwcinv\Managers\LogManager::LogDebug("=== AI EXTERNAL HTML START ===\r\n" . $html . "\r\n=== AI EXTERNAL HTML END ===");
+
         $processor->SendSuccessMessage([
             'html' => $html
         ]);

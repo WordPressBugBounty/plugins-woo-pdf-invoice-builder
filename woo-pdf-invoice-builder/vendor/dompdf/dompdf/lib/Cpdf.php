@@ -4953,10 +4953,13 @@ EOT;
                     if ($eight_bit) {
                         // with gamma correction
                         $gammacorr = 2.2;
-                        $pixel = pow((((127 - $alpha) * 255 / 127) / 255), $gammacorr) * 255;
+                        // rnwcinv: explicit (int) cast to silence PHP 8.1+
+                        // "Implicit conversion from float to int loses precision".
+                        // Truncation (not round) matches the silent <8.1 behavior.
+                        $pixel = (int) (pow((((127 - $alpha) * 255 / 127) / 255), $gammacorr) * 255);
                     } else {
                         // without gamma correction
-                        $pixel = (127 - $alpha) * 2;
+                        $pixel = (int) ((127 - $alpha) * 2);
 
                         $key = $col['red'] . $col['green'] . $col['blue'];
 
