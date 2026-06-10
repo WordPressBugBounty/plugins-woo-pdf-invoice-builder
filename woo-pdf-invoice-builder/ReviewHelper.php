@@ -145,7 +145,8 @@ greatly help me promote and keep growing this plugin that i love and i hope it h
                 jQuery('#wopdfinvoicerml').click(function(e){
                     e.preventDefault();
                     $.post( ajaxurl, {
-                        action: 'rednao_wcpdfinv_remind_me'
+                        action: 'rednao_wcpdfinv_remind_me',
+                        nonce: '<?php echo esc_js(wp_create_nonce('rnwcinv_review_notice'))?>'
                     });
                     jQuery('.sfReviewNotice').remove();
                 });
@@ -153,7 +154,8 @@ greatly help me promote and keep growing this plugin that i love and i hope it h
                 jQuery('#wopdfinvoicedsa').click(function(e){
                     e.preventDefault();
                     $.post( ajaxurl, {
-                        action: 'rednao_wcpdfinv_dont_show_again'
+                        action: 'rednao_wcpdfinv_dont_show_again',
+                        nonce: '<?php echo esc_js(wp_create_nonce('rnwcinv_review_notice'))?>'
                     });
                     jQuery('.sfReviewNotice').remove();
                 });

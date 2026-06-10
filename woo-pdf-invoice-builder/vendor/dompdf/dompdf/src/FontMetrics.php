@@ -170,6 +170,27 @@ class FontMetrics
      */
     public function registerFont($style, $remoteFile, $context = null)
     {
+        
+        $rnwcinvParsed = is_string($remoteFile) ? @parse_url($remoteFile) : false;
+        $rnwcinvScheme = (is_array($rnwcinvParsed) && isset($rnwcinvParsed['scheme']))
+            ? strtolower($rnwcinvParsed['scheme']) : '';
+        $rnwcinvHasHost = is_array($rnwcinvParsed) && isset($rnwcinvParsed['host']);
+
+        $rnwcinvIsLocalShape = (
+            is_string($remoteFile)
+            && $remoteFile !== ''
+            // No URL scheme, or a single-char "scheme" that is really a
+            // Windows drive letter (parse_url returns "C" for "C:/...").
+            && ($rnwcinvScheme === '' || strlen($rnwcinvScheme) === 1)
+            // No UNC path -- parse_url surfaces "host" for "//host/share/...".
+            && !$rnwcinvHasHost
+        );
+
+        if (!$rnwcinvIsLocalShape || !@is_file($remoteFile)) {
+            return false;
+        }
+        // ────────────────────────────────────────────────────────────────────
+
         $fontname = mb_strtolower($style["family"]);
         $families = $this->getFontFamilies();
 

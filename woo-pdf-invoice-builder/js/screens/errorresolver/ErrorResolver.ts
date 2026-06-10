@@ -37,7 +37,7 @@ class ErrorResolver{
             alert('Sorry the error couuldn\'t be captured, please contact support to resolve this issue');
             this.analyzeButton.stop();
         }).fail(()=>{
-            jQuery.post(ajaxurl,{action:'rednao_wcpdfinv_get_latest_error'},(response)=>{
+            jQuery.post(ajaxurl,{action:'rednao_wcpdfinv_get_latest_error',nonce:rnErrorResolver.nonce},(response)=>{
                 if(response=='')
                 {
                     alert('Sorry the error couuldn\'t be captured, please contact support to resolve this issue');

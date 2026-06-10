@@ -374,7 +374,7 @@ class RednaoPDFGenerator
         ini_set('display_errors', 0);
         require RednaoWooCommercePDFInvoice::$DIR.'/vendor/autoload.php';
         $this->dompdf = new Dompdf();
-        $this->dompdf->set_option('enable_remote', TRUE);
+        $this->dompdf->set_option('enable_remote', false);
 
         $enableFontSubsetting=true;
         if(isset($this->options->containerOptions->disableFontSubsetting)&&$this->options->containerOptions->disableFontSubsetting===true)

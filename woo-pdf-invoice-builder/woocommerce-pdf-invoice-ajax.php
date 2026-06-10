@@ -424,7 +424,7 @@ final class RednaoWooCommercePDFInvoiceAjax{
         $nonce=$processor->GetRequired('Nonce');;
 
 
-        if(wp_verify_nonce('can_view_order_'.$orderNumber,$nonce))
+        if(wp_verify_nonce($nonce,'can_view_order_'.$orderNumber)==false)
             $this->SendErrorMessage('Invalid nonce, please refresh the screen and try again');
         global $wpdb;
         $row=$wpdb->get_row($wpdb->prepare('select invoice_number InvoiceNumber,formatted_invoice_number FormattedInvoiceNumber,unix_timestamp(date) Date from '.RednaoWooCommercePDFInvoice::$INVOICES_CREATED_TABLE.
@@ -437,6 +437,9 @@ final class RednaoWooCommercePDFInvoiceAjax{
     public function PreviewCustomField(){
         error_reporting(E_ERROR);
         $processor=new HttpPostProcessor();
+        $nonce=$processor->GetRequired('nonce');
+        if(wp_verify_nonce($nonce,'wpinv-save-custom-fields')==false)
+            $processor->SendErrorMessage('Invalid request, please refresh the page and try again');
         $options=$processor->GetRequired('Options');
         CustomFieldValueRetriever::$order=new WC_Order($options->OrderNumber);
 
@@ -511,7 +514,12 @@ final class RednaoWooCommercePDFInvoiceAjax{
     }
 
     public function InspectOrder(){
+        RednaoWooCommercePDFInvoice::CheckIfPDFAdmin();
         $processor=new HttpPostProcessor();
+
+        $nonce=$processor->GetRequired('nonce');
+        if(wp_verify_nonce($nonce,'wpinv-save-custom-fields')==false)
+            $processor->SendErrorMessage('Invalid request, please refresh the page and try again');
 
         $orderNumber=$processor->GetRequired('OrderNumber');
         $type=$processor->GetRequired('Type');
@@ -537,7 +545,8 @@ final class RednaoWooCommercePDFInvoiceAjax{
 
         global $wpdb;
 
-        if(!wp_verify_nonce('search_invoice','wc_search_invoice'))
+        $nonce=isset($processor->data->Nonce)?$processor->data->Nonce:'';
+        if(!wp_verify_nonce($nonce,'wc_search_invoice'))
             die('Forbidden');
 
         $orders_meta_table = HPOSHelper::get_orders_meta_table();
@@ -590,17 +599,29 @@ final class RednaoWooCommercePDFInvoiceAjax{
     }
 
     public function GetLatestError(){
+        if(wp_verify_nonce(isset($_POST['nonce'])?$_POST['nonce']:'','woopdfinvoice_errorresolver')==false)
+            die('Forbidden');
         // register_shutdown_function(array($this, 'CatchShutdownHandler'));
         echo get_option('PDFInvoiceErrorMessage','');
         die();
     }
 
     public function RemindMeLater(){
+        if(wp_verify_nonce(isset($_POST['nonce'])?$_POST['nonce']:'','rnwcinv_review_notice')==false)
+            die('Forbidden');
         $currentStage=get_option('wopdfinv_stage',0);
         update_option('wopdfinv_stage',$currentStage+1);
     }
 
     public function DontShowAgain(){
+        $nonce=isset($_POST['nonce'])?$_POST['nonce']:'';
+        if($nonce==''&&isset($_POST['data'])){
+            $decoded=json_decode(stripslashes($_POST['data']),true);
+            if(is_array($decoded)&&isset($decoded['nonce']))
+                $nonce=$decoded['nonce'];
+        }
+        if(wp_verify_nonce($nonce,'rnwcinv_review_notice')==false&&wp_verify_nonce($nonce,'rnwcinv_savenonce')==false)
+            die('Forbidden');
         update_option('wopdfinv_stage',4);
         $this->SendSuccessMessage('');
     }
@@ -765,6 +786,9 @@ final class RednaoWooCommercePDFInvoiceAjax{
 
     public function CheckIfOrderIsValid()
     {
+        $nonce=$this->GetStringValue('nonce',false);
+        if(wp_verify_nonce($nonce,'rnwcinv_savenonce')==false&&wp_verify_nonce($nonce,'wpinv-save-custom-fields')==false)
+            $this->SendErrorMessage('Invalid request, please refresh and try again');
         $orderId=$this->GetNumberValue('OrderNumber');
         $post=wc_get_order($orderId);
         if($post==false)
@@ -1157,7 +1181,13 @@ final class RednaoWooCommercePDFInvoiceAjax{
      * Data arrives via WpAjaxPost which wraps everything in $_POST['data'] as JSON.
      */
     public function AIPreviewTemplate(){
+        RednaoWooCommercePDFInvoice::CheckIfPDFAdmin();
         $processor=new HttpPostProcessor();
+
+        $nonce = $processor->GetRequired('nonce');
+        if(wp_verify_nonce($nonce, 'rnwcinv_savenonce') === false){
+            $processor->SendErrorMessage('Invalid request');
+        }
 
         $rawData = isset($_POST['data']) ? stripslashes($_POST['data']) : '';
         if(empty($rawData)){

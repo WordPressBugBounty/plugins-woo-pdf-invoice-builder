@@ -5,7 +5,7 @@
  * Description: Attach a PDF Invoice to your woocommerce...
  * Author: RedNao
  * Author URI: http://rednao.com
- * Version: 2.0.8
+ * Version: 2.0.9
  * Text Domain: woo-pdf-invoice-builder
  * Domain Path: /languages/
  * License: GPLv3
@@ -245,7 +245,7 @@ final class RednaoWooCommercePDFInvoice
                     'PDFBuilderURL' => get_admin_url(null, 'admin.php?page=wc_invoice_menu'),
                     'GenerationURL' => wp_nonce_url(get_admin_url(null, "admin-ajax.php?action=rednao_wcpdfinv_generate_pdf&orderid=" . $orderid), 'rednao_wcpdfinv_generate_pdf_' . $orderid),
                     'OrderId' => $orderid,
-                    'CanViewOrderNonce' => 'can_view_order_' . $orderid,
+                    'CanViewOrderNonce' => wp_create_nonce('can_view_order_' . $orderid),
                     'HasPrintNode' => get_option('rniotg_printer_api_key', '') != '',
                     'DefaultPrinterId' => $DefaultPrinterId,
                     'DefaultPrinterLabel' => $DefaultPrinterLabel,

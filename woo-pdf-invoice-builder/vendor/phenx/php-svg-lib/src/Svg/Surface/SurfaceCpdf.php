@@ -170,7 +170,16 @@ class SurfaceCpdf implements SurfaceInterface
             }
         }
         else {
-            $data = file_get_contents($image);
+            // ── rnwcinv patch: disable SVG <image> file/URL loading ──
+            // Invoices never need an SVG to pull in an external raster image. Only
+            // self-contained data: URIs are supported (handled in the branch above).
+            // Refusing every non-data: href removes the file_get_contents() sink
+            // entirely, which closes local-file disclosure, DoS via huge/special
+            // files, phar:// deserialization RCE, and SSRF in one shot — no path or
+            // protocol validation required. Anything else simply draws nothing,
+            // exactly as the function already does for unknown image types.
+            return;
+            // ── end rnwcinv patch ──
         }
 
         $image = tempnam("", "svg");
