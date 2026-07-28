@@ -426,6 +426,10 @@ final class RednaoWooCommercePDFInvoiceAjax{
 
         if(wp_verify_nonce($nonce,'can_view_order_'.$orderNumber)==false)
             $this->SendErrorMessage('Invalid nonce, please refresh the screen and try again');
+
+        if(!current_user_can('edit_shop_orders'))
+            $this->SendErrorMessage('You are not allowed to view this invoice');
+
         global $wpdb;
         $row=$wpdb->get_row($wpdb->prepare('select invoice_number InvoiceNumber,formatted_invoice_number FormattedInvoiceNumber,unix_timestamp(date) Date from '.RednaoWooCommercePDFInvoice::$INVOICES_CREATED_TABLE.
             ' where order_id=%s and invoice_id=%s',$orderNumber,$invoiceId));
