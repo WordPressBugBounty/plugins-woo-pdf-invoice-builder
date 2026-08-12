@@ -18,8 +18,8 @@
 "Discount Savings"=>__("Discount Savings","woo-pdf-invoice-builder"),
 "Create a table with the products that have a discount and show how much money the customer is saving"=>__("Create a table with the products that have a discount and show how much money the customer is saving","woo-pdf-invoice-builder"),
 "Describe what data you want to display and the AI will generate the PHP code for you."=>__("Describe what data you want to display and the AI will generate the PHP code for you.","woo-pdf-invoice-builder"),
+"Close"=>__("Close","woo-pdf-invoice-builder"),
 "Edit Code"=>__("Edit Code","woo-pdf-invoice-builder"),
 "Edit Dynamic Condition Code"=>__("Edit Dynamic Condition Code","woo-pdf-invoice-builder"),
-"Save"=>__("Save","woo-pdf-invoice-builder"),
-"Close"=>__("Close","woo-pdf-invoice-builder")
+"Save"=>__("Save","woo-pdf-invoice-builder")
 );
