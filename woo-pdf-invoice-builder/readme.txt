@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=edsev
 Tags: woocommerce pdf invoice, woocommerce invoice, woocommerce, pdf, invoices
 Requires at least: 3.3
 Tested up to: 7.0.3
-Stable tag: 2.0.13
+Stable tag: 2.0.15
 License: GPLv3 or later
 Author URI: https://wooinvoice.rednao.com/
 Plugin URI: https://wooinvoice.rednao.com/
@@ -121,6 +121,8 @@ You can report security bugs through the Patchstack Vulnerability Disclosure Pro
 Version 2.0.0 includes several internal modifications. It is backward compatible, but it is advisable to review your existing templates after updating to ensure everything renders as expected.
 
 == Changelog ==
+= WooCommerce PDF Invoice Builder 2.0.14 =
+* Making role "read_private_shop_orders" able to do bulk actions
 = WooCommerce PDF Invoice Builder 2.0.12 =
 * Security fix with invoice detail method
 = WooCommerce PDF Invoice Builder 2.0.11 =

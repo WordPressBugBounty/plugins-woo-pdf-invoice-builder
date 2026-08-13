@@ -39,6 +39,10 @@ class RNBulkActionManager
             return;
         }
 
+        if (!RednaoWooCommercePDFInvoice::CanAccessPDFAdmin('read_private_shop_orders')) {
+            return;
+        }
+
         // Enqueue the bulk manager JS
         wp_enqueue_script(
             'rednao_pdfinv_bulk_manager',
@@ -112,6 +116,10 @@ class RNBulkActionManager
 
     public function AddBulkActions($actions)
     {
+        if (!RednaoWooCommercePDFInvoice::CanAccessPDFAdmin('read_private_shop_orders')) {
+            return $actions;
+        }
+
         if (RednaoWooCommercePDFInvoice::IsPR()) {
             $actions['rnview_invoice'] = __('Bulk view invoices', 'woo-pdf-invoice-builder');
             $actions['rnprint_invoice'] = __('Bulk print invoices', 'woo-pdf-invoice-builder');

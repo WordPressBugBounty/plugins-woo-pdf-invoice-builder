@@ -5,7 +5,7 @@
  * Description: Attach a PDF Invoice to your woocommerce...
  * Author: RedNao
  * Author URI: http://rednao.com
- * Version: 2.0.13
+ * Version: 2.0.15
  * Text Domain: woo-pdf-invoice-builder
  * Domain Path: /languages/
  * License: GPLv3
@@ -559,9 +559,42 @@ final class RednaoWooCommercePDFInvoice
         }
     }
 
-    public static function CheckIfPDFAdmin()
+    /**
+     * Check whether the current user can access an administrator-only PDF
+     * operation or has one of the additional capabilities supplied by the
+     * caller.
+     *
+     * @param array|string $additionalCapabilities Capability names as an array
+     *                                             or a comma-separated string.
+     * @return bool
+     */
+    public static function CanAccessPDFAdmin($additionalCapabilities = array())
     {
-        if (!current_user_can('manage_options')) {
+        if (current_user_can('manage_options')) {
+            return true;
+        }
+
+        if (is_string($additionalCapabilities)) {
+            $additionalCapabilities = explode(',', $additionalCapabilities);
+        }
+
+        if (!is_array($additionalCapabilities)) {
+            return false;
+        }
+
+        foreach ($additionalCapabilities as $capability) {
+            $capability = trim((string)$capability);
+            if ($capability !== '' && current_user_can($capability)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static function CheckIfPDFAdmin($additionalCapabilities = array())
+    {
+        if (!self::CanAccessPDFAdmin($additionalCapabilities)) {
             die('Forbidden');
         }
     }
