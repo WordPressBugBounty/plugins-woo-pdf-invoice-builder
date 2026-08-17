@@ -368,7 +368,15 @@ class PDFRefundTable extends PDFFieldBase
             foreach($items as $currentItem)
             {
                 $product=$currentItem->get_product();
-                $weight+=\floatval($product->get_weight()*$this->OrderToUse->get_qty_refunded_for_item($currentItem->get_id())*-1);
+                if(!$product)
+                    continue;
+
+                $productWeight=$product->get_weight();
+                $refundedQuantity=$this->OrderToUse->get_qty_refunded_for_item($currentItem->get_id());
+                if(!\is_numeric($productWeight)||!\is_numeric($refundedQuantity))
+                    continue;
+
+                $weight+=(float)$productWeight*(float)$refundedQuantity*-1;
             }
 
             return $weight . get_option( 'woocommerce_weight_unit' );

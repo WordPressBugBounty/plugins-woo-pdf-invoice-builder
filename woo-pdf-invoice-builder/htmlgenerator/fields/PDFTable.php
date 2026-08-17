@@ -379,7 +379,15 @@ class PDFTable extends PDFFieldBase
             foreach($items as $currentItem)
             {
                 $product=$currentItem->get_product();
-                $weight+=\floatval($product->get_weight()*$currentItem->get_quantity());
+                if(!$product)
+                    continue;
+
+                $productWeight=$product->get_weight();
+                $quantity=$currentItem->get_quantity();
+                if(!\is_numeric($productWeight)||!\is_numeric($quantity))
+                    continue;
+
+                $weight+=(float)$productWeight*(float)$quantity;
             }
 
             return $weight . get_option( 'woocommerce_weight_unit' );

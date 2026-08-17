@@ -5,7 +5,7 @@
  * Description: Attach a PDF Invoice to your woocommerce...
  * Author: RedNao
  * Author URI: http://rednao.com
- * Version: 2.0.15
+ * Version: 2.0.16
  * Text Domain: woo-pdf-invoice-builder
  * Domain Path: /languages/
  * License: GPLv3
