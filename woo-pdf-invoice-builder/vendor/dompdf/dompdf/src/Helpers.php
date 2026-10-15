@@ -829,39 +829,51 @@ class Helpers
 
         set_error_handler(array("\\rnDompdf\\Helpers", "record_warnings"));
 
-        if ($is_local_path || ini_get("allow_url_fopen")) {
-            if ($is_local_path === false) {
-                $uri = Helpers::encodeURI($uri);
-            }
-            if (isset($maxlen)) {
-                $result = file_get_contents($uri, false, $context, $offset, $maxlen);
-            } else {
-                $result = file_get_contents($uri, false, $context, $offset);
-            }
-            if (isset($http_response_header)) {
-                $headers = $http_response_header;
-            }
+        try {
+            if ($is_local_path || ini_get("allow_url_fopen")) {
+                if ($is_local_path === false) {
+                    $uri = Helpers::encodeURI($uri);
+                }
+                if (function_exists('http_clear_last_response_headers')) {
+                    http_clear_last_response_headers();
+                }
+                if (isset($maxlen)) {
+                    $result = file_get_contents($uri, false, $context, $offset, $maxlen);
+                } else {
+                    $result = file_get_contents($uri, false, $context, $offset);
+                }
+                if (function_exists('http_get_last_response_headers')) {
+                    $headers = http_get_last_response_headers();
+                } else {
+                    // Dynamic lookup avoids PHP 8.5's compile-time deprecation of this variable.
+                    $headerVariable = 'http_response_header';
+                    $headers = isset($$headerVariable) ? $$headerVariable : null;
+                }
 
-        } elseif (function_exists("curl_exec")) {
-            $curl = curl_init($uri);
+            } elseif (function_exists("curl_exec")) {
+                $curl = curl_init($uri);
 
-            //TODO: use $context to define additional curl options
-            curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-            curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_HEADER, true);
-            if ($offset > 0) {
-                curl_setopt($curl, CURLOPT_RESUME_FROM, $offset);
+                //TODO: use $context to define additional curl options
+                curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+                curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($curl, CURLOPT_HEADER, true);
+                if ($offset > 0) {
+                    curl_setopt($curl, CURLOPT_RESUME_FROM, $offset);
+                }
+
+                $data = curl_exec($curl);
+                $raw_headers = substr($data, 0, curl_getinfo($curl, CURLINFO_HEADER_SIZE));
+                $headers = preg_split("/[\n\r]+/", trim($raw_headers));
+                $result = substr($data, curl_getinfo($curl, CURLINFO_HEADER_SIZE));
+                // PHP 8 uses CurlHandle objects; curl_close() is a deprecated no-op in 8.5.
+                if (is_resource($curl)) {
+                    curl_close($curl);
+                }
             }
-
-            $data = curl_exec($curl);
-            $raw_headers = substr($data, 0, curl_getinfo($curl, CURLINFO_HEADER_SIZE));
-            $headers = preg_split("/[\n\r]+/", trim($raw_headers));
-            $result = substr($data, curl_getinfo($curl, CURLINFO_HEADER_SIZE));
-            curl_close($curl);
+        } finally {
+            restore_error_handler();
         }
-
-        restore_error_handler();
 
         return array($result, $headers);
     }
